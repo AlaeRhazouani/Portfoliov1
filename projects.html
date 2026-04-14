@@ -125,6 +125,19 @@
       line-height: 1.3;
       color: var(--blue);
     }
+    a.project-title {
+      text-decoration: none;
+      transition: transform 100ms var(--ease-bounce);
+      display: inline-block;
+    }
+    a.project-title:hover {
+      text-decoration: underline;
+      text-decoration-style: wavy;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 3px;
+      transform: scale(1.02);
+    }
+    a.project-title:active { transform: translateY(2px); }
 
     /* Description */
     .project-desc {
@@ -202,7 +215,7 @@
       <img src="assets/jenkins.png" alt="CI/CD Pipeline screenshot"
            style="width:103.01%; height:101.51%; left:-0.07%; top:0;" />
     </div>
-    <p class="project-title">CI/CD Pipeline &amp; Monitoring — Student Task Manager · February 2026</p>
+    <a href="https://github.com/AlaeRhazouani/student-task-manager" target="_blank" rel="noopener" class="project-title">CI/CD Pipeline &amp; Monitoring — Student Task Manager · February 2026</a>
     <p class="project-desc">Built a full Jenkins CI/CD pipeline for a 3-microservice Flask + PostgreSQL app containerized with Docker Compose and deployed on Oracle Cloud. The pipeline automates build, pytest testing, GHCR image push, and SSH deployment — with automatic rollback on failure. Includes staging/production separation, Discord notifications, and real-time Prometheus + Grafana monitoring with custom dashboards and alerts.</p>
   </div>
 
@@ -224,7 +237,7 @@
       <img src="assets/facial.png" alt="Facial Emotion Detection screenshot"
            style="width:100%; height:105.43%; left:0; top:-2.72%;" />
     </div>
-    <p class="project-title">Facial Emotion Detection &amp; MLOps Pipeline · 2025 – 2026</p>
+    <a href="https://github.com/AlaeRhazouani/facial-emotion-detection" target="_blank" rel="noopener" class="project-title">Facial Emotion Detection &amp; MLOps Pipeline · 2025 – 2026</a>
     <p class="project-desc">Trained a CNN from scratch on FER2013 (35,887 images) to classify 7 emotions in real time using MediaPipe + OpenCV, with a custom Grad-CAM implementation for model explainability. Automated the entire lifecycle with a GitHub Actions CI/CD pipeline that validates training and continuously deploys a Streamlit demo to Hugging Face Spaces, with experiment tracking via Weights &amp; Biases.</p>
   </div>
 
@@ -246,7 +259,7 @@
       <img src="assets/smartoffice.png" alt="Smart Office IoT screenshot"
            style="width:100.1%; height:230.75%; left:-0.05%; top:-37.01%;" />
     </div>
-    <p class="project-title">Smart Office IoT — Cisco Packet Tracer Simulation · 2025 – 2026</p>
+    <a href="https://github.com/AlaeRhazouani/Smart-Office-IoT-Project" target="_blank" rel="noopener" class="project-title">Smart Office IoT — Cisco Packet Tracer Simulation · 2025 – 2026</a>
     <p class="project-desc">Designed and simulated a fully automated smart office environment using Cisco Packet Tracer. The system covers 5 zones — entrance, director's office, conference rooms, work area, and break areas — each with dedicated IoT gateways managing sensors and actuators. Features include RFID access control, motion-triggered lighting, intelligent HVAC, and an automatic fire detection and sprinkler system, all networked over WPA2-PSK Wi-Fi and controlled via a central IoT server.</p>
   </div>
 
