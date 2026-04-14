@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Experience — Alae Rhazouani</title>
+  <style>
+    @font-face {
+      font-family: 'Splatink';
+      src: url('assets/fonts/Splatink_PERSONAL_USE_ONLY.otf') format('opentype');
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Du Bellay';
+      src: url('assets/fonts/dubellay.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    :root {
+      --blue:           #3796d0;
+      --font-title:     clamp(32px, 3.65vw, 70px);
+      --font-nav:       clamp(13px, 1.3vw,  25px);
+      --font-body:      clamp(16px, 1.875vw, 36px);
+      --ease-bounce:    cubic-bezier(.175, .885, .12, 1.775);
+      --content-w:      min(700px, 90vw);
+      --logo-title-gap: clamp(40px, 8vh, 105px);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      background: #000;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      color: var(--blue);
+    }
+
+    /* ── Page wrapper ────────────────────────────────────────────── */
+    .page {
+      max-width: var(--content-w);
+      margin: 0 auto;
+      padding: clamp(32px, 6vh, 100px) 0 clamp(60px, 10vh, 160px);
+      display: flex;
+      flex-direction: column;
+      gap: clamp(28px, 4vh, 60px);
+    }
+
+    /* ── Logo + title group ──────────────────────────────────────── */
+    .top-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--logo-title-gap);
+    }
+
+    @keyframes logo-zoom {
+      0%   { transform: scale(1); }
+      40%  { transform: scale(1.3); }
+      100% { transform: scale(8); opacity: 0; }
+    }
+
+    .logo-link {
+      display: block;
+      width: clamp(56px, 5vw, 96px);
+      height: clamp(56px, 5vw, 96px);
+      border-radius: 50%;
+    }
+    .logo-link.zooming {
+      animation: logo-zoom 400ms var(--ease-bounce) forwards;
+      pointer-events: none;
+    }
+    .logo {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      pointer-events: none;
+    }
+
+    .page-title {
+      font-family: 'Splatink', cursive;
+      font-size: var(--font-title);
+      font-weight: normal;
+      line-height: 1;
+      color: var(--blue);
+      text-align: center;
+    }
+
+    /* ── App screenshot ───────────────────────────────────────────── */
+    /* Container preserves the 694×335 aspect ratio from Figma */
+    .screenshot-wrap {
+      width: 100%;
+      aspect-ratio: 694 / 335;
+      position: relative;
+      overflow: hidden;
+      border: 3px solid var(--blue);
+    }
+    .screenshot-wrap img {
+      position: absolute;
+      width: 109.25%;
+      height: 487.72%;
+      left: -4.18%;
+      top: -36.55%;
+      max-width: none;
+      pointer-events: none;
+    }
+
+    /* ── Job info block — Du Bellay 36px / 51px line-height ─────── */
+    .job-info {
+      font-family: 'Du Bellay', serif;
+      font-size: var(--font-body);
+      line-height: 1.42;   /* 51px / 36px */
+      color: var(--blue);
+    }
+
+    /* ── Description — Du Bellay 36px / 47px line-height ────────── */
+    .description {
+      font-family: 'Du Bellay', serif;
+      font-size: var(--font-body);
+      line-height: 1.3;    /* 47px / 36px */
+      color: var(--blue);
+      display: flex;
+      flex-direction: column;
+      gap: 1em;
+    }
+
+    /* ── Tech stack architecture diagram ────────────────────────── */
+    .stack-diagram {
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* Vertical spine running down the left */
+    .stack-diagram::before {
+      content: '';
+      position: absolute;
+      left: calc(clamp(48px, 6vw, 90px) / 2);
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom,
+        transparent,
+        var(--blue) 8%,
+        var(--blue) 92%,
+        transparent
+      );
+      opacity: 0.4;
+    }
+
+    @keyframes slide-in {
+      from { opacity: 0; transform: translateX(-18px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    .stack-layer {
+      display: flex;
+      align-items: center;
+      gap: clamp(16px, 2.5vw, 40px);
+      padding: clamp(14px, 2vh, 28px) 0;
+      border-bottom: 1px solid rgba(55, 150, 208, 0.15);
+      animation: slide-in 400ms var(--ease-bounce) both;
+      animation-delay: var(--delay, 0s);
+    }
+    .stack-layer:last-child { border-bottom: none; }
+
+    /* Layer node — circle on the spine */
+    .layer-node {
+      flex-shrink: 0;
+      width: clamp(48px, 6vw, 90px);
+      height: clamp(48px, 6vw, 90px);
+      border: 2px solid var(--blue);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      z-index: 1;
+    }
+    .layer-node img {
+      width: 55%;
+      height: 55%;
+      object-fit: contain;
+    }
+    /* For layers with no single icon — show category letter */
+    .layer-node span {
+      font-family: 'Splatink', cursive;
+      font-size: clamp(14px, 1.5vw, 24px);
+      color: var(--blue);
+    }
+
+    /* Right side content */
+    .layer-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: clamp(6px, 1vh, 12px);
+    }
+
+    .layer-name {
+      font-family: 'Splatink', cursive;
+      font-size: clamp(13px, 1.1vw, 20px);
+      color: var(--blue);
+      opacity: 0.6;
+      letter-spacing: 0.08em;
+    }
+
+    .layer-techs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: clamp(8px, 1.5vw, 20px);
+      align-items: center;
+    }
+
+    .tech-chip {
+      display: flex;
+      align-items: center;
+      gap: clamp(5px, 0.7vw, 10px);
+      border: 1.5px solid rgba(55, 150, 208, 0.5);
+      border-radius: 999px;
+      padding: clamp(4px, 0.6vh, 8px) clamp(10px, 1.2vw, 18px);
+      transition: border-color 150ms ease, transform 100ms var(--ease-bounce);
+    }
+    .tech-chip:hover {
+      border-color: var(--blue);
+      transform: translateY(-2px);
+    }
+    .tech-chip img {
+      width: clamp(16px, 1.5vw, 26px);
+      height: clamp(16px, 1.5vw, 26px);
+      object-fit: contain;
+      display: block;
+    }
+    .tech-chip span {
+      font-family: 'Du Bellay', serif;
+      font-size: var(--font-nav);
+      color: var(--blue);
+      white-space: nowrap;
+    }
+
+    /* ── TOC nav ─────────────────────────────────────────────────── */
+    .toc {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: clamp(6px, 1.8vh, 22px);
+    }
+
+    .toc-item {
+      display: flex;
+      width: 100%;
+      align-items: baseline;
+      font-family: 'Du Bellay', serif;
+      font-size: var(--font-nav);
+      font-weight: normal;
+      color: var(--blue);
+      text-decoration: none;
+      transition: transform 100ms var(--ease-bounce);
+    }
+    .toc-item:hover {
+      transform: scale(1.05);
+      text-decoration: underline;
+      text-decoration-style: wavy;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 3px;
+    }
+    .toc-item:active { transform: translateY(2px); }
+
+    .toc-label { flex-shrink: 0; }
+    .toc-dots {
+      flex: 1;
+      align-self: stretch;
+      background-image: radial-gradient(circle, var(--blue) 20%, transparent 21%);
+      background-size: 0.55em 0.55em;
+      background-repeat: repeat-x;
+      background-position: left 62%;
+      margin: 0 0.3em;
+      opacity: 0.55;
+    }
+    .toc-num { flex-shrink: 0; }
+  </style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- Logo + title -->
+  <div class="top-group">
+    <a href="index.html" class="logo-link" id="logo-link" aria-label="Go to home">
+      <img class="logo" src="assets/logo.png" alt="Logo" />
+    </a>
+    <h1 class="page-title">Experience_</h1>
+  </div>
+
+  <!-- App screenshot -->
+  <div class="screenshot-wrap">
+    <img src="assets/fesurban.png" alt="FESURBAN app screenshot" />
+  </div>
+
+  <!-- Job info -->
+  <div class="job-info">
+    <p>Software Engineering Intern</p>
+    <p>Agence Urbaine de Fès</p>
+    <p>July – August 2025 · On-site, Fès</p>
+  </div>
+
+  <!-- Description -->
+  <div class="description">
+    <p>Built FESURBAN, a full-stack mobile app replacing a fully paper-based urban planning file system. Agents went from spending 15–45 minutes searching through physical archives to finding any file in under a second — a 5x productivity improvement confirmed in user testing.</p>
+    <p>Stack: Flutter frontend, Node.js/Express REST API, MySQL database with optimized multi-join queries across 8 tables, JWT authentication, and bcrypt security. Designed as a replicable digitization model for Urban Agencies across Morocco.</p>
+  </div>
+
+  <!-- Tech stack — architecture layers -->
+  <div class="stack-diagram">
+
+    <!-- Frontend -->
+    <div class="stack-layer" style="--delay: 0.05s">
+      <div class="layer-node"><img src="assets/tech/flutter.svg" alt="" /></div>
+      <div class="layer-content">
+        <span class="layer-name">Frontend</span>
+        <div class="layer-techs">
+          <div class="tech-chip"><img src="assets/tech/flutter.svg" alt="Flutter" /><span>Flutter</span></div>
+          <div class="tech-chip"><img src="assets/tech/dart.svg"    alt="Dart"    /><span>Dart</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Backend -->
+    <div class="stack-layer" style="--delay: 0.15s">
+      <div class="layer-node"><img src="assets/tech/nodejs.svg" alt="" /></div>
+      <div class="layer-content">
+        <span class="layer-name">Backend</span>
+        <div class="layer-techs">
+          <div class="tech-chip"><img src="assets/tech/nodejs.svg"  alt="Node.js"    /><span>Node.js</span></div>
+          <div class="tech-chip"><img src="assets/tech/express.svg" alt="Express.js" /><span>Express.js</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Database -->
+    <div class="stack-layer" style="--delay: 0.25s">
+      <div class="layer-node"><img src="assets/tech/mysql.svg" alt="" /></div>
+      <div class="layer-content">
+        <span class="layer-name">Database</span>
+        <div class="layer-techs">
+          <div class="tech-chip"><img src="assets/tech/mysql.svg" alt="MySQL" /><span>MySQL</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Security -->
+    <div class="stack-layer" style="--delay: 0.35s">
+      <div class="layer-node"><img src="assets/tech/jwt.svg" alt="" /></div>
+      <div class="layer-content">
+        <span class="layer-name">Security</span>
+        <div class="layer-techs">
+          <div class="tech-chip"><img src="assets/tech/jwt.svg"    alt="JWT"    /><span>JWT</span></div>
+          <div class="tech-chip"><img src="assets/tech/bcrypt.png" alt="bcrypt" /><span>bcrypt</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- TOC nav -->
+  <nav aria-label="Table of contents">
+    <ul class="toc">
+      <li><a href="about.html"           class="toc-item"><span class="toc-label">About</span><span class="toc-dots"></span><span class="toc-num">I</span></a></li>
+      <li><a href="experience.html"      class="toc-item"><span class="toc-label">Experience</span><span class="toc-dots"></span><span class="toc-num">II</span></a></li>
+      <li><a href="projects.html"            class="toc-item"><span class="toc-label">Projects</span><span class="toc-dots"></span><span class="toc-num">III</span></a></li>
+      <li><a href="extracurricular.html" class="toc-item"><span class="toc-label">Extracurricular experience</span><span class="toc-dots"></span><span class="toc-num">IV</span></a></li>
+      <li><a href="#gallery"             class="toc-item"><span class="toc-label">Gallery</span><span class="toc-dots"></span><span class="toc-num">V</span></a></li>
+      <li><a href="contact.html"         class="toc-item"><span class="toc-label">Contact</span><span class="toc-dots"></span><span class="toc-num">VI</span></a></li>
+    </ul>
+  </nav>
+
+</div>
+
+<script>
+  document.getElementById('logo-link').addEventListener('click', function (e) {
+    e.preventDefault();
+    this.classList.add('zooming');
+    setTimeout(() => window.location.href = 'index.html', 380);
+  });
+</script>
+
+<script>
+(function () {
+  var SRC = 'assets/bg/bg-w3-1.png';
+  var OVERLAP = 200;
+  var wrap = document.createElement('div');
+  wrap.style.cssText = 'position:fixed;top:0;left:0;width:100%;z-index:-1;pointer-events:none;overflow:hidden;';
+  document.body.insertBefore(wrap, document.body.firstChild);
+  function onScroll() {
+    wrap.style.transform = 'translateY(' + (-window.scrollY) + 'px)';
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  var probe = new Image();
+  probe.onload = function () {
+    var ar = probe.naturalWidth / probe.naturalHeight;
+    function build() {
+      wrap.innerHTML = '';
+      var W = window.innerWidth;
+      var tileH = Math.round(W / ar);
+      var step = tileH - OVERLAP;
+      var total = window.innerHeight * 8;
+      wrap.style.height = total + 'px';
+      for (var y = 0; y <= total; y += step) {
+        var img = document.createElement('img');
+        img.src = SRC;
+        img.alt = '';
+        var fade = y === 0 ? '' : '-webkit-mask-image:linear-gradient(to bottom,transparent 0%,black ' + OVERLAP + 'px,black 100%);mask-image:linear-gradient(to bottom,transparent 0%,black ' + OVERLAP + 'px,black 100%);';
+        img.style.cssText = 'position:absolute;left:0;top:' + y + 'px;width:100%;display:block;pointer-events:none;' + fade;
+        wrap.appendChild(img);
+      }
+      onScroll();
+    }
+    build();
+    window.addEventListener('resize', build);
+  };
+  probe.src = SRC;
+}());
+</script>
+</body>
+</html>

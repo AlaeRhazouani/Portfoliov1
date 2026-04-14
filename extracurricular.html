@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Extracurricular Experience — Alae Rhazouani</title>
+  <style>
+    @font-face {
+      font-family: 'Splatink';
+      src: url('assets/fonts/Splatink_PERSONAL_USE_ONLY.otf') format('opentype');
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Du Bellay';
+      src: url('assets/fonts/dubellay.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    :root {
+      --blue:           #3796d0;
+      --font-title:     clamp(22px, 2.6vw, 50px);   /* shorter title needs smaller clamp */
+      --font-nav:       clamp(13px, 1.3vw,  25px);
+      --font-body:      clamp(16px, 1.875vw, 36px);
+      --ease-bounce:    cubic-bezier(.175, .885, .12, 1.775);
+      --content-w:      min(700px, 90vw);
+      --logo-title-gap: clamp(40px, 8vh, 105px);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      background: #000;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      color: var(--blue);
+    }
+
+    /* ── Page wrapper ────────────────────────────────────────────── */
+    .page {
+      max-width: var(--content-w);
+      margin: 0 auto;
+      padding: clamp(32px, 6vh, 100px) 0 clamp(60px, 10vh, 160px);
+      display: flex;
+      flex-direction: column;
+      gap: clamp(60px, 8vh, 130px);
+    }
+
+    /* ── Logo + title group ──────────────────────────────────────── */
+    .top-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--logo-title-gap);
+    }
+
+    @keyframes logo-zoom {
+      0%   { transform: scale(1); }
+      40%  { transform: scale(1.3); }
+      100% { transform: scale(8); opacity: 0; }
+    }
+
+    .logo-link {
+      display: block;
+      width: clamp(56px, 5vw, 96px);
+      height: clamp(56px, 5vw, 96px);
+      border-radius: 50%;
+    }
+    .logo-link.zooming {
+      animation: logo-zoom 400ms var(--ease-bounce) forwards;
+      pointer-events: none;
+    }
+    .logo {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      pointer-events: none;
+    }
+
+    .page-title {
+      font-family: 'Splatink', cursive;
+      font-size: var(--font-title);
+      font-weight: normal;
+      line-height: 1.1;
+      color: var(--blue);
+      text-align: center;
+    }
+    /* "_" is 128px vs 70px in Figma → ratio 1.83 */
+    .page-title .underscore {
+      font-size: calc(var(--font-title) * 1.83);
+      vertical-align: middle;
+    }
+
+    /* ── Experience entry ────────────────────────────────────────── */
+    .entry {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(16px, 2.5vh, 36px);
+    }
+
+    /* Top row: org logo box + role title */
+    .entry-header {
+      display: flex;
+      gap: clamp(16px, 3vw, 40px);
+      align-items: center;
+    }
+
+    /* Org logo — square bordered box, 180×180 in Figma */
+    .org-box {
+      flex-shrink: 0;
+      width: clamp(80px, 9.4vw, 180px);
+      aspect-ratio: 1;
+      border: 1.5px solid var(--blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      padding: 0;
+    }
+    .org-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      pointer-events: none;
+    }
+    .org-box--padded { padding: 3%; }
+
+    /* Role + dates */
+    .entry-role {
+      font-family: 'Du Bellay', serif;
+      font-size: var(--font-body);
+      line-height: 1.42;
+      color: var(--blue);
+    }
+
+    /* Description */
+    .entry-desc {
+      font-family: 'Du Bellay', serif;
+      font-size: var(--font-body);
+      line-height: 1.3;
+      color: var(--blue);
+      display: flex;
+      flex-direction: column;
+      gap: 1em;
+    }
+
+    /* Divider between entries */
+    .entry-divider {
+      width: 100%;
+      height: 1px;
+      background: rgba(55, 150, 208, 0.2);
+    }
+
+    /* ── TOC nav ─────────────────────────────────────────────────── */
+    .toc {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: clamp(6px, 1.8vh, 22px);
+    }
+
+    .toc-item {
+      display: flex;
+      width: 100%;
+      align-items: baseline;
+      font-family: 'Du Bellay', serif;
+      font-size: var(--font-nav);
+      font-weight: normal;
+      color: var(--blue);
+      text-decoration: none;
+      transition: transform 100ms var(--ease-bounce);
+    }
+    .toc-item:hover {
+      transform: scale(1.05);
+      text-decoration: underline;
+      text-decoration-style: wavy;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 3px;
+    }
+    .toc-item:active { transform: translateY(2px); }
+
+    .toc-label { flex-shrink: 0; }
+    .toc-dots {
+      flex: 1;
+      align-self: stretch;
+      background-image: radial-gradient(circle, var(--blue) 20%, transparent 21%);
+      background-size: 0.55em 0.55em;
+      background-repeat: repeat-x;
+      background-position: left 62%;
+      margin: 0 0.3em;
+      opacity: 0.55;
+    }
+    .toc-num { flex-shrink: 0; }
+
+    /* ── Responsive: stack org box above text on narrow screens ─── */
+    @media (max-width: 480px) {
+      .entry-header { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- Logo + title -->
+  <div class="top-group">
+    <a href="index.html" class="logo-link" id="logo-link" aria-label="Go to home">
+      <img class="logo" src="assets/logo.png" alt="Logo" />
+    </a>
+    <h1 class="page-title">Extracurricular Experience<span class="underscore">_</span></h1>
+  </div>
+
+  <!-- ── Entry 1: ADEAM ── -->
+  <div class="entry">
+    <div class="entry-header">
+      <div class="org-box org-box--padded">
+        <img src="assets/ade.png" alt="ADEAM logo" />
+      </div>
+      <p class="entry-role">President, ADEAM — </br> Association des Élèves Ingénieurs Arts &amp; Métiers<br/>2024 – 2025</p>
+    </div>
+    <div class="entry-desc">
+      <p>Led the legally recognized student body of ENSAM Meknès — the primary interface between the student community and school administration. Oversaw an executive board of 10 members across 6 operational cells: student affairs, extracurricular activities, external relations &amp; partnerships, internal operations, sports, and media &amp; IT — with a total budget of 200,000 MAD.</p>
+      <p>Key achievements include reviving the Arts &amp; Métiers Inter-Instituts after 6 consecutive years of slumber, organizing the school's traditional Gala, coordinating 22 student clubs, and driving the renovation of the student cafeteria and shared campus spaces.</p>
+    </div>
+  </div>
+
+
+  <!-- ── Entry 2: Space Club ── -->
+  <div class="entry">
+    <div class="entry-header">
+      <div class="org-box">
+        <img src="assets/spaceclub.png" alt="Space Club logo" />
+      </div>
+      <p class="entry-role">President, Space Club </br>Arts &amp; Métiers<br/>2024 – 2025</p>
+    </div>
+    <div class="entry-desc">
+      <p>Led the Space Club and organized the first astronomy festival in the Meknès region — conceived, planned, and executed entirely from scratch. An initiative that brought science to the public and put ENSAM on the map for something bigger than campus life.</p>
+    </div>
+  </div>
+
+
+  <!-- ── Entry 3: FAME ── -->
+  <div class="entry">
+    <div class="entry-header">
+      <div class="org-box">
+        <img src="assets/fame.png" alt="FAME logo" />
+      </div>
+      <p class="entry-role">Media Coordinator, Forum Arts &amp; Métiers Entreprises (FAME) </br> 21st Edition<br/>Nov 2023 – Jul 2024</p>
+    </div>
+    <div class="entry-desc">
+      <p>Handled most of the media and communication for FAME — one of Morocco's most prominent academic-industry forums, organized annually by ENSAM Meknès students under the patronage of H.M. King Mohammed VI. Created social media content, designed printed materials, and led the production of the FAME Revue — the forum's flagship magazine featuring articles by leading figures of the Moroccan industry around the edition's industrial theme.</p>
+    </div>
+  </div>
+
+  <!-- TOC nav -->
+  <nav aria-label="Table of contents">
+    <ul class="toc">
+      <li><a href="about.html"          class="toc-item"><span class="toc-label">About</span><span class="toc-dots"></span><span class="toc-num">I</span></a></li>
+      <li><a href="experience.html"     class="toc-item"><span class="toc-label">Experience</span><span class="toc-dots"></span><span class="toc-num">II</span></a></li>
+      <li><a href="projects.html"           class="toc-item"><span class="toc-label">Projects</span><span class="toc-dots"></span><span class="toc-num">III</span></a></li>
+      <li><a href="extracurricular.html" class="toc-item"><span class="toc-label">Extracurricular experience</span><span class="toc-dots"></span><span class="toc-num">IV</span></a></li>
+      <li><a href="#gallery"            class="toc-item"><span class="toc-label">Gallery</span><span class="toc-dots"></span><span class="toc-num">V</span></a></li>
+      <li><a href="contact.html"        class="toc-item"><span class="toc-label">Contact</span><span class="toc-dots"></span><span class="toc-num">VI</span></a></li>
+    </ul>
+  </nav>
+
+</div>
+
+<script>
+  document.getElementById('logo-link').addEventListener('click', function (e) {
+    e.preventDefault();
+    this.classList.add('zooming');
+    setTimeout(() => window.location.href = 'index.html', 380);
+  });
+</script>
+
+<script>
+(function () {
+  var SRC = 'assets/bg/bg-w3-1.png';
+  var OVERLAP = 200;
+  var wrap = document.createElement('div');
+  wrap.style.cssText = 'position:fixed;top:0;left:0;width:100%;z-index:-1;pointer-events:none;overflow:hidden;';
+  document.body.insertBefore(wrap, document.body.firstChild);
+  function onScroll() {
+    wrap.style.transform = 'translateY(' + (-window.scrollY) + 'px)';
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  var probe = new Image();
+  probe.onload = function () {
+    var ar = probe.naturalWidth / probe.naturalHeight;
+    function build() {
+      wrap.innerHTML = '';
+      var W = window.innerWidth;
+      var tileH = Math.round(W / ar);
+      var step = tileH - OVERLAP;
+      var total = window.innerHeight * 8;
+      wrap.style.height = total + 'px';
+      for (var y = 0; y <= total; y += step) {
+        var img = document.createElement('img');
+        img.src = SRC;
+        img.alt = '';
+        var fade = y === 0 ? '' : '-webkit-mask-image:linear-gradient(to bottom,transparent 0%,black ' + OVERLAP + 'px,black 100%);mask-image:linear-gradient(to bottom,transparent 0%,black ' + OVERLAP + 'px,black 100%);';
+        img.style.cssText = 'position:absolute;left:0;top:' + y + 'px;width:100%;display:block;pointer-events:none;' + fade;
+        wrap.appendChild(img);
+      }
+      onScroll();
+    }
+    build();
+    window.addEventListener('resize', build);
+  };
+  probe.src = SRC;
+}());
+</script>
+</body>
+</html>

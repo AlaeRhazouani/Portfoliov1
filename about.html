@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About — Alae Rhazouani</title>
+  <style>
+    @font-face {
+      font-family: 'Splatink';
+      src: url('assets/fonts/Splatink_PERSONAL_USE_ONLY.otf') format('opentype');
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Du Bellay';
+      src: url('assets/fonts/dubellay.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    :root {
+      --blue:            #3796d0;
+      --border-blue:     #0085d8;
+      --font-title:      clamp(32px, 3.65vw, 70px);
+      --font-nav:        clamp(13px, 1.3vw,  25px);
+      --font-body:       clamp(16px, 1.875vw, 36px);
+      --ease-bounce:     cubic-bezier(.175, .885, .12, 1.775);
+      --content-w:       min(700px, 90vw);
+      --logo-title-gap: clamp(40px, 8vh, 105px);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      background: #000;
+      scroll-behavior: smooth;
+    }
+
+    /* ── Repeating background ───────────────────────────────────── */
+    body {
+      min-height: 100vh;
+      color: var(--blue);
+    }
+
+    /* ── Page wrapper ───────────────────────────────────────────── */
+    .page {
+      max-width: var(--content-w);
+      margin: 0 auto;
+      padding: clamp(32px, 6vh, 100px) 0 clamp(60px, 10vh, 160px);
+      display: flex;
+      flex-direction: column;
+      gap: clamp(32px, 5vh, 80px);
+    }
+
+    /* ── Logo + title group ─────────────────────────────────────── */
+    .top-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--logo-title-gap);
+    }
+
+    @keyframes logo-zoom {
+      0%   { transform: scale(1); }
+      40%  { transform: scale(1.3); }
+      100% { transform: scale(8); opacity: 0; }
+    }
+
+    .logo-link {
+      display: block;
+      width: clamp(56px, 5vw, 96px);
+      height: clamp(56px, 5vw, 96px);
+      border-radius: 50%;
+    }
+    .logo-link.zooming {
+      animation: logo-zoom 400ms var(--ease-bounce) forwards;
+      pointer-events: none;
+    }
+
+    .logo {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      pointer-events: none;
+    }
+
+    .page-title {
+      font-family: 'Splatink', cursive;
+      font-size: var(--font-title);
+      font-weight: normal;
+      line-height: 1;
+      color: var(--blue);
+      text-align: center;
+    }
+
+    /* ── Intro section: photo + first paragraph side by side ────── */
+    .intro {
+      display: flex;
+      gap: clamp(16px, 3vw, 40px);
+      align-items: flex-start;
+    }
+
+    .photo-wrap {
+      flex-shrink: 0;
+      width: min(290px, 38%);
+      aspect-ratio: 290 / 368;
+      overflow: hidden;
+      border: 2px solid var(--border-blue);
+      position: relative;
+    }
+    .photo-wrap img {
+      position: absolute;
+      width: 138.5%;
+      height: 139.69%;
+      left: -14.71%;
+      top: -0.06%;
+      max-width: none;
+      object-fit: cover;
+      filter: grayscale(100%);
+      transition: filter 200ms ease-in-out;
+    }
+    .photo-wrap:hover img { filter: grayscale(0%); }
+
+    .intro-text {
+      font-family: 'Du Bellay', serif;
+      font-size: var(--font-body);
+      line-height: 1.3;
+      color: var(--blue);
+    }
+
+    /* ── Body paragraphs ─────────────────────────────────────────── */
+    .body-text {
+      font-family: 'Du Bellay', serif;
+      font-size: var(--font-body);
+      line-height: 1.3;
+      color: var(--blue);
+    }
+
+    /* ── Resume section ─────────────────────────────────────────── */
+    .resume-section {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(12px, 2vh, 24px);
+      align-items: flex-start;
+    }
+
+    .divider {
+      width: 100%;
+      height: 2px;
+      background: var(--blue);
+    }
+
+    .resume-link {
+      font-family: 'Du Bellay', serif;
+      font-size: var(--font-nav);
+      color: var(--blue);
+      text-decoration: none;
+      align-self: center;
+      transition: transform 100ms var(--ease-bounce);
+    }
+    .resume-link:hover {
+      transform: scale(1.05);
+      text-decoration: underline;
+      text-decoration-style: wavy;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 3px;
+    }
+    .resume-link:active { transform: translateY(2px); }
+
+    /* ── TOC nav ─────────────────────────────────────────────────── */
+    .toc {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: clamp(8px, 2.3vh, 28px);
+    }
+
+    .toc-item {
+      display: flex;
+      width: 100%;
+      align-items: baseline;
+      font-family: 'Du Bellay', serif;
+      font-size: var(--font-nav);
+      font-weight: normal;
+      color: var(--blue);
+      text-decoration: none;
+      transition: transform 100ms var(--ease-bounce);
+    }
+    .toc-item:hover {
+      transform: scale(1.05);
+      text-decoration: underline;
+      text-decoration-style: wavy;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 3px;
+    }
+    .toc-item:active { transform: translateY(2px); }
+
+    .toc-label { flex-shrink: 0; }
+
+    .toc-dots {
+      flex: 1;
+      align-self: stretch;
+      background-image: radial-gradient(circle, var(--blue) 20%, transparent 21%);
+      background-size: 0.55em 0.55em;
+      background-repeat: repeat-x;
+      background-position: left 62%;
+      margin: 0 0.3em;
+      opacity: 0.55;
+    }
+
+    .toc-num { flex-shrink: 0; }
+
+    /* ── Responsive: stack photo above text on narrow screens ────── */
+    @media (max-width: 500px) {
+      .intro { flex-direction: column; }
+      .photo-wrap { width: 60%; margin: 0 auto; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- Logo + title -->
+  <div class="top-group">
+    <a href="index.html" class="logo-link" id="logo-link" aria-label="Go to home">
+      <img class="logo" src="assets/logo.png" alt="Logo" />
+    </a>
+    <h1 class="page-title">About_</h1>
+  </div>
+
+  <!-- Intro: photo + first paragraph -->
+  <section class="intro">
+    <div class="photo-wrap">
+      <img src="assets/photo.png" alt="Alae Rhazouani" />
+    </div>
+    <p class="intro-text">Hey, I'm Alae — a 21-year-old engineering student at ENSAM Meknès, building things at the intersection of DevOps, Cloud, and intelligent systems.</p>
+  </section>
+
+  <!-- Body paragraphs -->
+  <p class="body-text">I'm the kind of person who gets genuinely excited about a clean CI/CD pipeline or a well-monitored deployment dashboard.</p>
+
+  <p class="body-text">I spend most of my time automating things that shouldn't be manual — from containerized microservices on Oracle Cloud to MLOps pipelines that ship straight to Hugging Face Spaces. Docker, Jenkins, GitHub Actions, Prometheus... these are the tools I think in. If it can be automated, I'll automate it.</p>
+
+  <p class="body-text">Outside of code, I led the student engineering association at ENSAM and co-organized the first astronomy festival in the Meknès region from scratch — which taught me that shipping a real event and shipping real software have a lot more in common than you'd think. Both need ownership, coordination, and a solid plan B.</p>
+
+  <p class="body-text">I'm currently looking for a 2-month PFA internship (summer 2026) where I can dive deep into a real DevOps or Cloud environment. If that sounds like a fit, let's talk.</p>
+
+  <!-- Resume download -->
+  <div class="resume-section">
+    <div class="divider"></div>
+    <a href="#" class="resume-link">Download my Resume</a>
+    <div class="divider"></div>
+  </div>
+
+  <!-- TOC nav -->
+  <nav aria-label="Table of contents">
+    <ul class="toc">
+      <li><a href="about.html"           class="toc-item"><span class="toc-label">About</span><span class="toc-dots"></span><span class="toc-num">I</span></a></li>
+      <li><a href="experience.html"      class="toc-item"><span class="toc-label">Experience</span><span class="toc-dots"></span><span class="toc-num">II</span></a></li>
+      <li><a href="projects.html"            class="toc-item"><span class="toc-label">Projects</span><span class="toc-dots"></span><span class="toc-num">III</span></a></li>
+      <li><a href="extracurricular.html" class="toc-item"><span class="toc-label">Extracurricular experience</span><span class="toc-dots"></span><span class="toc-num">IV</span></a></li>
+      <li><a href="#gallery"             class="toc-item"><span class="toc-label">Gallery</span><span class="toc-dots"></span><span class="toc-num">V</span></a></li>
+      <li><a href="contact.html"         class="toc-item"><span class="toc-label">Contact</span><span class="toc-dots"></span><span class="toc-num">VI</span></a></li>
+    </ul>
+  </nav>
+
+</div>
+
+<script>
+  document.getElementById('logo-link').addEventListener('click', function (e) {
+    e.preventDefault();
+    this.classList.add('zooming');
+    setTimeout(() => window.location.href = 'index.html', 380);
+  });
+</script>
+<script>
+(function () {
+  var SRC = 'assets/bg/bg-w3-1.png';
+  var OVERLAP = 200;
+  var wrap = document.createElement('div');
+  wrap.style.cssText = 'position:fixed;top:0;left:0;width:100%;z-index:-1;pointer-events:none;overflow:hidden;';
+  document.body.insertBefore(wrap, document.body.firstChild);
+  function onScroll() {
+    wrap.style.transform = 'translateY(' + (-window.scrollY) + 'px)';
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  var probe = new Image();
+  probe.onload = function () {
+    var ar = probe.naturalWidth / probe.naturalHeight;
+    function build() {
+      wrap.innerHTML = '';
+      var W = window.innerWidth;
+      var tileH = Math.round(W / ar);
+      var step = tileH - OVERLAP;
+      var total = window.innerHeight * 8;
+      wrap.style.height = total + 'px';
+      for (var y = 0; y <= total; y += step) {
+        var img = document.createElement('img');
+        img.src = SRC;
+        img.alt = '';
+        var fade = y === 0 ? '' : '-webkit-mask-image:linear-gradient(to bottom,transparent 0%,black ' + OVERLAP + 'px,black 100%);mask-image:linear-gradient(to bottom,transparent 0%,black ' + OVERLAP + 'px,black 100%);';
+        img.style.cssText = 'position:absolute;left:0;top:' + y + 'px;width:100%;display:block;pointer-events:none;' + fade;
+        wrap.appendChild(img);
+      }
+      onScroll();
+    }
+    build();
+    window.addEventListener('resize', build);
+  };
+  probe.src = SRC;
+}());
+</script>
+</body>
+</html>

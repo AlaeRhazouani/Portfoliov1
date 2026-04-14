@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Projects — Alae Rhazouani</title>
+  <style>
+    @font-face {
+      font-family: 'Splatink';
+      src: url('assets/fonts/Splatink_PERSONAL_USE_ONLY.otf') format('opentype');
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Du Bellay';
+      src: url('assets/fonts/dubellay.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    :root {
+      --blue:           #3796d0;
+      --font-title:     clamp(32px, 3.65vw, 70px);
+      --font-nav:       clamp(13px, 1.3vw,  25px);
+      --font-body:      clamp(16px, 1.875vw, 36px);
+      --ease-bounce:    cubic-bezier(.175, .885, .12, 1.775);
+      --content-w:      min(700px, 90vw);
+      --logo-title-gap: clamp(40px, 8vh, 105px);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      background: #000;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      color: var(--blue);
+    }
+
+    /* ── Page wrapper ────────────────────────────────────────────── */
+    .page {
+      max-width: var(--content-w);
+      margin: 0 auto;
+      padding: clamp(32px, 6vh, 100px) 0 clamp(60px, 10vh, 160px);
+      display: flex;
+      flex-direction: column;
+      gap: clamp(60px, 8vh, 130px);
+    }
+
+    /* ── Logo + title group ──────────────────────────────────────── */
+    .top-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--logo-title-gap);
+    }
+
+    @keyframes logo-zoom {
+      0%   { transform: scale(1); }
+      40%  { transform: scale(1.3); }
+      100% { transform: scale(8); opacity: 0; }
+    }
+
+    .logo-link {
+      display: block;
+      width: clamp(56px, 5vw, 96px);
+      height: clamp(56px, 5vw, 96px);
+      border-radius: 50%;
+    }
+    .logo-link.zooming {
+      animation: logo-zoom 400ms var(--ease-bounce) forwards;
+      pointer-events: none;
+    }
+    .logo {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      pointer-events: none;
+    }
+
+    .page-title {
+      font-family: 'Splatink', cursive;
+      font-size: var(--font-title);
+      font-weight: normal;
+      line-height: 1;
+      color: var(--blue);
+      text-align: center;
+    }
+    .page-title .underscore {
+      font-size: calc(var(--font-title) * 1.43);
+      vertical-align: middle;
+    }
+
+    /* ── Project entry ───────────────────────────────────────────── */
+    .project {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(16px, 2.5vh, 36px);
+    }
+
+    /* Screenshot — 697×335 aspect ratio from Figma */
+    .project-img {
+      width: 100%;
+      aspect-ratio: 697 / 335;
+      position: relative;
+      overflow: hidden;
+      border: 3px solid var(--blue);
+    }
+    .project-img img {
+      position: absolute;
+      max-width: none;
+      pointer-events: none;
+    }
+
+    /* Title + date */
+    .project-title {
+      font-family: 'Du Bellay', serif;
+      font-size: var(--font-body);
+      line-height: 1.3;
+      color: var(--blue);
+    }
+
+    /* Description */
+    .project-desc {
+      font-family: 'Du Bellay', serif;
+      font-size: var(--font-body);
+      line-height: 1.3;
+      color: var(--blue);
+      margin-top: clamp(8px, 2vh, 32px);
+    }
+
+    /* Divider between entries */
+    .entry-divider {
+      width: 100%;
+      height: 1px;
+      background: rgba(55, 150, 208, 0.2);
+    }
+
+    /* ── TOC nav ─────────────────────────────────────────────────── */
+    .toc {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: clamp(6px, 1.8vh, 22px);
+    }
+
+    .toc-item {
+      display: flex;
+      width: 100%;
+      align-items: baseline;
+      font-family: 'Du Bellay', serif;
+      font-size: var(--font-nav);
+      font-weight: normal;
+      color: var(--blue);
+      text-decoration: none;
+      transition: transform 100ms var(--ease-bounce);
+    }
+    .toc-item:hover {
+      transform: scale(1.05);
+      text-decoration: underline;
+      text-decoration-style: wavy;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 3px;
+    }
+    .toc-item:active { transform: translateY(2px); }
+
+    .toc-label { flex-shrink: 0; }
+    .toc-dots {
+      flex: 1;
+      align-self: stretch;
+      background-image: radial-gradient(circle, var(--blue) 20%, transparent 21%);
+      background-size: 0.55em 0.55em;
+      background-repeat: repeat-x;
+      background-position: left 62%;
+      margin: 0 0.3em;
+      opacity: 0.55;
+    }
+    .toc-num { flex-shrink: 0; }
+  </style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- Logo + title -->
+  <div class="top-group">
+    <a href="index.html" class="logo-link" id="logo-link" aria-label="Go to home">
+      <img class="logo" src="assets/logo.png" alt="Logo" />
+    </a>
+    <h1 class="page-title">Projects<span class="underscore">_</span></h1>
+  </div>
+
+  <!-- ── Project 1: CI/CD Pipeline ── -->
+  <div class="project">
+    <div class="project-img">
+      <img src="assets/jenkins.png" alt="CI/CD Pipeline screenshot"
+           style="width:103.01%; height:101.51%; left:-0.07%; top:0;" />
+    </div>
+    <p class="project-title">CI/CD Pipeline &amp; Monitoring — Student Task Manager · February 2026</p>
+    <p class="project-desc">Built a full Jenkins CI/CD pipeline for a 3-microservice Flask + PostgreSQL app containerized with Docker Compose and deployed on Oracle Cloud. The pipeline automates build, pytest testing, GHCR image push, and SSH deployment — with automatic rollback on failure. Includes staging/production separation, Discord notifications, and real-time Prometheus + Grafana monitoring with custom dashboards and alerts.</p>
+  </div>
+
+
+  <!-- ── Project 2: IA Matrice de Compétences ── -->
+  <div class="project">
+    <div class="project-img">
+      <img src="assets/aiportal.png" alt="IA Matrice de Compétences screenshot"
+           style="width:100.94%; height:100%; left:-0.32%; top:0;" />
+    </div>
+    <p class="project-title">IA Matrice de Compétences · CGI Maroc </br> March 2026 - In progress</p>
+    <p class="project-desc">Built a hybrid RAG pipeline analyzing multi-language code repositories and Office/PDF documents to automatically score developer skills. Uses DeepSeek-Coder + Mistral 7B via Ollama with CodeBERT/BGE-m3 embeddings and pgvector for semantic search. A 3-layer reliability stack (prompt engineering → Ollama structured output → Pydantic validation) guarantees deterministic JSON output. Deployed on-premise for CGI Maroc with a multi-role React dashboard, CSV/XLSX/PDF exports, and a REST API for profile-project matching.</p>
+  </div>
+
+
+  <!-- ── Project 3: Facial Emotion Detection ── -->
+  <div class="project">
+    <div class="project-img">
+      <img src="assets/facial.png" alt="Facial Emotion Detection screenshot"
+           style="width:100%; height:105.43%; left:0; top:-2.72%;" />
+    </div>
+    <p class="project-title">Facial Emotion Detection &amp; MLOps Pipeline · 2025 – 2026</p>
+    <p class="project-desc">Trained a CNN from scratch on FER2013 (35,887 images) to classify 7 emotions in real time using MediaPipe + OpenCV, with a custom Grad-CAM implementation for model explainability. Automated the entire lifecycle with a GitHub Actions CI/CD pipeline that validates training and continuously deploys a Streamlit demo to Hugging Face Spaces, with experiment tracking via Weights &amp; Biases.</p>
+  </div>
+
+
+  <!-- ── Project 4: Electrical Management OCR ── -->
+  <div class="project">
+    <div class="project-img">
+      <img src="assets/uvillage.png" alt="Electrical Management OCR screenshot"
+           style="width:100.01%; height:118.67%; left:0; top:0;" />
+    </div>
+    <p class="project-title">Electrical Management OCR &amp; QR Code Pipeline for UVillage Meknès<br/>October 2025 – February 2026</p>
+    <p class="project-desc">Built a YOLOv8 OCR pipeline (custom dataset of 2,001 images via Roboflow) that detects both QR codes and meter digits from a single photo. Paired with a React Native mobile app for field agents and a React/Vite admin dashboard with 3-role RBAC. The billing cycle is fully automated — consumption calculation, SMTP email sending, and bidirectional sync with Dolibarr CRM via REST API.</p>
+  </div>
+
+
+  <!-- ── Project 5: Smart Office IoT ── -->
+  <div class="project">
+    <div class="project-img">
+      <img src="assets/smartoffice.png" alt="Smart Office IoT screenshot"
+           style="width:100.1%; height:230.75%; left:-0.05%; top:-37.01%;" />
+    </div>
+    <p class="project-title">Smart Office IoT — Cisco Packet Tracer Simulation · 2025 – 2026</p>
+    <p class="project-desc">Designed and simulated a fully automated smart office environment using Cisco Packet Tracer. The system covers 5 zones — entrance, director's office, conference rooms, work area, and break areas — each with dedicated IoT gateways managing sensors and actuators. Features include RFID access control, motion-triggered lighting, intelligent HVAC, and an automatic fire detection and sprinkler system, all networked over WPA2-PSK Wi-Fi and controlled via a central IoT server.</p>
+  </div>
+
+  <!-- TOC nav -->
+  <nav aria-label="Table of contents">
+    <ul class="toc">
+      <li><a href="about.html"           class="toc-item"><span class="toc-label">About</span><span class="toc-dots"></span><span class="toc-num">I</span></a></li>
+      <li><a href="experience.html"      class="toc-item"><span class="toc-label">Experience</span><span class="toc-dots"></span><span class="toc-num">II</span></a></li>
+      <li><a href="projects.html"        class="toc-item"><span class="toc-label">Projects</span><span class="toc-dots"></span><span class="toc-num">III</span></a></li>
+      <li><a href="extracurricular.html" class="toc-item"><span class="toc-label">Extracurricular experience</span><span class="toc-dots"></span><span class="toc-num">IV</span></a></li>
+      <li><a href="#gallery"             class="toc-item"><span class="toc-label">Gallery</span><span class="toc-dots"></span><span class="toc-num">V</span></a></li>
+      <li><a href="contact.html"         class="toc-item"><span class="toc-label">Contact</span><span class="toc-dots"></span><span class="toc-num">VI</span></a></li>
+    </ul>
+  </nav>
+
+</div>
+
+<script>
+  document.getElementById('logo-link').addEventListener('click', function (e) {
+    e.preventDefault();
+    this.classList.add('zooming');
+    setTimeout(() => window.location.href = 'index.html', 380);
+  });
+</script>
+
+<script>
+(function () {
+  var SRC = 'assets/bg/bg-w3-1.png';
+  var OVERLAP = 200;
+  var wrap = document.createElement('div');
+  wrap.style.cssText = 'position:fixed;top:0;left:0;width:100%;z-index:-1;pointer-events:none;overflow:hidden;';
+  document.body.insertBefore(wrap, document.body.firstChild);
+  function onScroll() {
+    wrap.style.transform = 'translateY(' + (-window.scrollY) + 'px)';
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  var probe = new Image();
+  probe.onload = function () {
+    var ar = probe.naturalWidth / probe.naturalHeight;
+    function build() {
+      wrap.innerHTML = '';
+      var W = window.innerWidth;
+      var tileH = Math.round(W / ar);
+      var step = tileH - OVERLAP;
+      var total = window.innerHeight * 8;
+      wrap.style.height = total + 'px';
+      for (var y = 0; y <= total; y += step) {
+        var img = document.createElement('img');
+        img.src = SRC;
+        img.alt = '';
+        var fade = y === 0 ? '' : '-webkit-mask-image:linear-gradient(to bottom,transparent 0%,black ' + OVERLAP + 'px,black 100%);mask-image:linear-gradient(to bottom,transparent 0%,black ' + OVERLAP + 'px,black 100%);';
+        img.style.cssText = 'position:absolute;left:0;top:' + y + 'px;width:100%;display:block;pointer-events:none;' + fade;
+        wrap.appendChild(img);
+      }
+      onScroll();
+    }
+    build();
+    window.addEventListener('resize', build);
+  };
+  probe.src = SRC;
+}());
+</script>
+</body>
+</html>

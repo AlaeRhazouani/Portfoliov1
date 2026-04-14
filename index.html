@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Alae Rhazouani</title>
+  <style>
+    @font-face {
+      font-family: 'Splatink';
+      src: url('assets/fonts/Splatink_PERSONAL_USE_ONLY.otf') format('opentype');
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Du Bellay';
+      src: url('assets/fonts/dubellay.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    :root {
+      --blue:        #3796d0;
+      --font-title:  clamp(32px, 3.65vw, 70px);   /* 70px @ 1920px */
+      --font-nav:    clamp(13px, 1.3vw,  25px);   /* 25px @ 1920px */
+      --ease-bounce: cubic-bezier(.175, .885, .12, 1.775);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #000;
+    }
+
+    /* ── Background ─────────────────────────────────────────────── */
+    .bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+    }
+    .bg img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      pointer-events: none;
+    }
+
+    /* ── Main layout — centred column ───────────────────────────── */
+    .home {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(20px, 5vh, 60px);
+      padding: clamp(16px, 4vw, 40px);
+    }
+
+    /* ── Title ───────────────────────────────────────────────────── */
+    .title {
+      font-family: 'Splatink', cursive;
+      font-size: var(--font-title);
+      font-weight: normal;
+      line-height: 1;
+      color: var(--blue);
+      white-space: nowrap;
+    }
+
+    /* ── Table-of-contents nav ───────────────────────────────────── */
+    .toc {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: clamp(8px, 2.3vh, 28px);
+      width: min(700px, 80vw);
+    }
+
+    .toc-item {
+      display: flex;
+      width: 100%;
+      align-items: baseline;
+      font-family: 'Du Bellay', serif;
+      font-size: var(--font-nav);
+      font-weight: normal;
+      color: var(--blue);
+      text-decoration: none;
+      transition: transform 100ms var(--ease-bounce);
+    }
+    .toc-item:hover {
+      transform: scale(1.05);
+      text-decoration: underline;
+      text-decoration-style: wavy;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 3px;
+    }
+    .toc-item:active { transform: translateY(2px); }
+
+    .toc-label { flex-shrink: 0; }
+
+    /* CSS dot leaders — scales with font size automatically */
+    .toc-dots {
+      flex: 1;
+      align-self: stretch;
+      background-image: radial-gradient(circle, var(--blue) 20%, transparent 21%);
+      background-size: 0.55em 0.55em;
+      background-repeat: repeat-x;
+      background-position: left 62%;
+      margin: 0 0.3em;
+      opacity: 0.55;
+    }
+
+    .toc-num { flex-shrink: 0; }
+
+    /* ── Social icons ────────────────────────────────────────────── */
+    .socials {
+      position: fixed;
+      bottom: clamp(16px, 3.5vh, 40px);
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: clamp(14px, 1.5vw, 24px);
+      z-index: 2;
+    }
+    .socials a {
+      display: flex;
+      color: var(--blue);
+      text-decoration: none;
+      transition: transform 100ms var(--ease-bounce);
+    }
+    .socials a:nth-child(odd):hover  { transform: scale(1.2) rotate(6deg); }
+    .socials a:nth-child(even):hover { transform: scale(1.2) rotate(-6deg); }
+    .socials a:active                { transform: translateY(2px); }
+    .socials svg {
+      width:  clamp(20px, 1.5vw, 28px);
+      height: clamp(20px, 1.5vw, 28px);
+      fill: currentColor;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background -->
+  <div class="bg">
+    <img src="assets/bg/bg-w3-1.png" alt="" />
+  </div>
+
+  <!-- Content -->
+  <main class="home">
+    <h1 class="title">Alae Rhazouani</h1>
+
+    <nav aria-label="Table of contents">
+      <ul class="toc">
+        <li><a href="about.html"           class="toc-item"><span class="toc-label">About</span><span class="toc-dots"></span><span class="toc-num">I</span></a></li>
+        <li><a href="experience.html"      class="toc-item"><span class="toc-label">Experience</span><span class="toc-dots"></span><span class="toc-num">II</span></a></li>
+        <li><a href="projects.html"            class="toc-item"><span class="toc-label">Projects</span><span class="toc-dots"></span><span class="toc-num">III</span></a></li>
+        <li><a href="extracurricular.html" class="toc-item"><span class="toc-label">Extracurricular experience</span><span class="toc-dots"></span><span class="toc-num">IV</span></a></li>
+        <li><a href="#gallery"             class="toc-item"><span class="toc-label">Gallery</span><span class="toc-dots"></span><span class="toc-num">V</span></a></li>
+        <li><a href="contact.html"         class="toc-item"><span class="toc-label">Contact</span><span class="toc-dots"></span><span class="toc-num">VI</span></a></li>
+      </ul>
+    </nav>
+  </main>
+
+  <!-- Social icons — update hrefs -->
+  <div class="socials">
+    <a href="https://linkedin.com/in/" target="_blank" rel="noopener" aria-label="LinkedIn">
+      <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+    </a>
+    <a href="https://github.com/" target="_blank" rel="noopener" aria-label="GitHub">
+      <svg viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+    </a>
+    <a href="mailto:your@email.com" aria-label="Email">
+      <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/></svg>
+    </a>
+  </div>
+
+</body>
+</html>
