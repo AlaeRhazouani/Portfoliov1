@@ -131,6 +131,18 @@
       gap: 1em;
     }
 
+    /* ── One job = info, description, stack ─────────────────────── */
+    .job {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(28px, 4vh, 60px);
+    }
+    .job-divider {
+      width: 100%;
+      height: 1px;
+      background: rgba(55, 150, 208, 0.2);
+    }
+
     /* ── Tech stack: request flow + layer grid ───────────────────── */
     .stack {
       border-radius: 24px;
@@ -259,7 +271,8 @@
     /* Layer grid */
     .stack-grid {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(4, minmax(0, max-content));
+      justify-content: space-between;
       row-gap: 22px;
       padding-top: clamp(18px, 2.6vh, 26px);
       border-top: 1px solid rgba(55, 150, 208, .2);
@@ -351,6 +364,70 @@
     <h1 class="page-title">Experience_</h1>
   </div>
 
+  <!-- ── OCP Phosboucraa · PFA internship 2026 ── -->
+  <article class="job">
+
+  <div class="job-info">
+    <p>Engineering Intern (PFA)</p>
+    <p>OCP Phosboucraa — OCP Group</p>
+    <p>July – September 2026 · On-site, Laâyoune</p>
+  </div>
+
+  <div class="description">
+    <p>Built a cost-forecasting layer for the seawater reverse-osmosis desalination unit at OCP Phosboucraa. The site's dashboard only reported a week's operating costs after the fact; I rebuilt it and added a predictive layer that estimates the coming week's cost along with its uncertainty.</p>
+    <p>Engineered a weekly dataset from raw SCADA exports and focused the modelling on the specific energy consumption of the main stream, the dominant cost item. A leave-one-out Ridge regression served as a diagnostic, a hierarchical Bayesian model in PyMC gives the predictive distribution, and a Monte Carlo simulation combines all seven cost categories into a distribution of the total weekly cost.</p>
+    <p>Added a conversational assistant that answers questions about past costs and forecasts in plain language, using LLM tool calling over the dashboard's own data, with a local Ollama model as a drop-in option for confidentiality.</p>
+  </div>
+
+  <section class="stack glass" aria-labelledby="stack-title-ocp">
+    <header class="stack-head">
+      <h2 class="stack-title" id="stack-title-ocp">Tech stack</h2>
+      <span class="stack-meta">Cost dashboard · forecasting · assistant</span>
+    </header>
+
+    <div class="flow" aria-hidden="true">
+      <div class="flow-icon"><img src="assets/tech/react.svg" alt="" /></div>
+      <div class="flow-link"><span class="flow-proto">REST</span><i></i><i></i></div>
+      <div class="flow-icon"><img src="assets/tech/fastapi.svg" alt="" /></div>
+      <div class="flow-link flow-link--db"><span class="flow-proto">SQL</span><i></i><i></i></div>
+      <div class="flow-icon"><img src="assets/tech/postgresql.svg" alt="" /></div>
+      <span class="flow-name">Dashboard</span>
+      <span class="flow-name">API + assistant</span>
+      <span class="flow-name">Database</span>
+    </div>
+
+    <dl class="stack-grid">
+      <div class="stack-col">
+        <dt>Frontend</dt>
+        <dd><img src="assets/tech/react.svg" alt="" /><span class="tech-name">React</span><span class="tech-note">Cost dashboard</span></dd>
+        <dd><img src="assets/tech/vite.svg" alt="" /><span class="tech-name">Vite</span><span class="tech-note">Build tooling</span></dd>
+      </div>
+      <div class="stack-col">
+        <dt>Backend</dt>
+        <dd><img src="assets/tech/fastapi.svg" alt="" /><span class="tech-name">FastAPI</span><span class="tech-note">REST API, forecasts</span></dd>
+        <dd><img src="assets/tech/postgresql.svg" alt="" /><span class="tech-name">PostgreSQL</span><span class="tech-note">Costs and forecasts</span></dd>
+      </div>
+      <div class="stack-col">
+        <dt>Modelling</dt>
+        <dd><img src="assets/tech/pandas.svg" alt="" /><span class="tech-name">pandas</span><span class="tech-note">SCADA features</span></dd>
+        <dd><img src="assets/tech/scikitlearn.svg" alt="" /><span class="tech-name">scikit-learn</span><span class="tech-note">Ridge, LOO</span></dd>
+        <dd><img src="assets/tech/python.svg" alt="" /><span class="tech-name">PyMC</span><span class="tech-note">Bayesian model</span></dd>
+      </div>
+      <div class="stack-col">
+        <dt>Assistant</dt>
+        <dd><img src="assets/tech/googlegemini.svg" alt="" /><span class="tech-name">Gemini</span><span class="tech-note">Tool calling</span></dd>
+        <dd><img src="assets/tech/ollama.svg" alt="" /><span class="tech-name">Ollama</span><span class="tech-note">Local model option</span></dd>
+      </div>
+    </dl>
+  </section>
+
+  </article>
+
+  <div class="job-divider"></div>
+
+  <!-- ── Agence Urbaine de Fès · 2025 ── -->
+  <article class="job">
+
   <!-- App screenshot -->
   <div class="screenshot-wrap">
     <img src="assets/fesurban.webp" alt="FESURBAN app screenshot" />
@@ -409,6 +486,8 @@
       </div>
     </dl>
   </section>
+
+  </article>
 
   <!-- TOC nav -->
   <nav class="glass" aria-label="Table of contents">
