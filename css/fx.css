@@ -202,8 +202,43 @@ body > .socials.glass {
 }
 @keyframes fx-blink { 50% { opacity: 0; } }
 
-/* ── Logo: slow idle float ────────────────────────────────────── */
-.logo { animation: fx-float 6s ease-in-out infinite; }
+/* ── Logo: glossy, with a slow idle float ─────────────────────── */
+.logo-link {
+  position: relative;
+  animation: fx-float 6s ease-in-out infinite;
+  filter:
+    drop-shadow(0 0 10px rgba(55, 150, 208, .45))
+    drop-shadow(0 2px 1px rgba(0, 0, 0, .6));
+}
+/* Gloss layers are clipped to the logo's own shape */
+.logo-link::before,
+.logo-link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  -webkit-mask: url(../assets/logo.png) center / cover no-repeat;
+  mask: url(../assets/logo.png) center / cover no-repeat;
+}
+/* Lacquer: bright upper half, cool rim light at the bottom */
+.logo-link::before {
+  background: linear-gradient(to bottom,
+    rgba(255, 255, 255, .6) 0%,
+    rgba(255, 255, 255, .22) 42%,
+    transparent 50%,
+    transparent 82%,
+    rgba(143, 208, 245, .35) 100%);
+}
+/* Shine that sweeps across every few seconds */
+.logo-link::after {
+  background: linear-gradient(115deg, transparent 38%, rgba(255, 255, 255, .9) 50%, transparent 62%) no-repeat;
+  background-size: 250% 100%;
+  animation: fx-shine 4.5s ease-in-out infinite;
+}
+@keyframes fx-shine {
+  0%, 55% { background-position: 160% 0; }
+  85%, 100% { background-position: -60% 0; }
+}
 @keyframes fx-float {
   0%, 100% { translate: 0 0;    rotate: -3deg; }
   50%      { translate: 0 -5px; rotate: 3deg; }
