@@ -25,6 +25,175 @@
   ambient.innerHTML = '<i class="fx-blob b1"></i><i class="fx-blob b2"></i><i class="fx-blob b3"></i><i class="fx-cursor"></i>';
   document.body.appendChild(ambient);
 
+  // ── Space: starfield, shooting stars, floating crew ──────────
+  var sky = document.createElement('canvas');
+  sky.className = 'fx-sky';
+  ambient.insertBefore(sky, ambient.querySelector('.fx-cursor'));
+  var ctx = sky.getContext('2d');
+  var W = 0, H = 0, stars = [], meteor = null, nextMeteor = 4000;
+
+  function seedSky() {
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = window.innerWidth;
+    H = window.innerHeight;
+    sky.width = Math.round(W * dpr);
+    sky.height = Math.round(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    stars = [];
+    var count = Math.round(W * H / 5000);
+    for (var i = 0; i < count; i++) {
+      var depth = Math.random();
+      stars.push({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        r: 0.35 + depth * depth * 1.5,
+        depth: depth,
+        a: 0.3 + Math.random() * 0.6,
+        speed: 0.6 + Math.random() * 2.2,
+        phase: Math.random() * 6.283,
+        tint: Math.random() < 0.3 ? '#8fd0f5' : '#e4f2ff'
+      });
+    }
+  }
+
+  function drawSky(t) {
+    ctx.clearRect(0, 0, W, H);
+    var scroll = window.scrollY;
+    for (var i = 0; i < stars.length; i++) {
+      var s = stars[i];
+      // Nearer stars scroll faster for a little depth
+      var y = ((s.y - scroll * (0.03 + s.depth * 0.12)) % H + H) % H;
+      var a = reduce ? s.a : s.a * (0.6 + 0.4 * Math.sin(t * 0.001 * s.speed + s.phase));
+      ctx.globalAlpha = a;
+      ctx.fillStyle = s.tint;
+      ctx.beginPath();
+      ctx.arc(s.x, y, s.r, 0, 6.283);
+      ctx.fill();
+      if (s.r > 1.45) {
+        ctx.globalAlpha = a * 0.35;
+        ctx.fillRect(s.x - s.r * 3.2, y - 0.35, s.r * 6.4, 0.7);
+        ctx.fillRect(s.x - 0.35, y - s.r * 3.2, 0.7, s.r * 6.4);
+      }
+    }
+    if (meteor) {
+      var m = meteor;
+      var tail = ctx.createLinearGradient(m.x, m.y, m.x - m.vx * 0.22, m.y - m.vy * 0.22);
+      tail.addColorStop(0, 'rgba(228, 242, 255, ' + m.life + ')');
+      tail.addColorStop(1, 'rgba(55, 150, 208, 0)');
+      ctx.globalAlpha = 1;
+      ctx.strokeStyle = tail;
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      ctx.moveTo(m.x, m.y);
+      ctx.lineTo(m.x - m.vx * 0.22, m.y - m.vy * 0.22);
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  function stepMeteor(dt) {
+    nextMeteor -= dt * 1000;
+    if (!meteor && nextMeteor <= 0) {
+      var dir = Math.random() < 0.5 ? -1 : 1;
+      meteor = { x: W * (0.2 + Math.random() * 0.6), y: H * Math.random() * 0.35, vx: dir * (500 + Math.random() * 300), vy: 260 + Math.random() * 160, life: 1 };
+      nextMeteor = 6000 + Math.random() * 7000;
+    }
+    if (meteor) {
+      meteor.x += meteor.vx * dt;
+      meteor.y += meteor.vy * dt;
+      meteor.life -= dt * 1.1;
+      if (meteor.life <= 0) meteor = null;
+    }
+  }
+
+  var CREW_ART = {
+    astronaut:
+      '<svg viewBox="0 0 64 64" fill="none" stroke="#3796d0" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">' +
+        '<rect x="17" y="24" width="30" height="24" rx="7" fill="#0b1724"/>' +
+        '<path d="M22 33 L12 39 M42 33 L51 25 M27 47 L25 57 M37 47 L40 56"/>' +
+        '<circle cx="12" cy="39.5" r="2.2" fill="#3796d0"/><circle cx="51.5" cy="24.5" r="2.2" fill="#3796d0"/>' +
+        '<rect x="21" y="28" width="22" height="21" rx="8" fill="#0d1b2a"/>' +
+        '<rect x="27" y="35" width="10" height="6" rx="1.5" stroke-width="1.6"/>' +
+        '<circle cx="32" cy="19" r="12" fill="#0d1b2a"/>' +
+        '<path d="M24 18 a8 6 0 0 1 16 0 v1 a8 6 0 0 1 -16 0z" fill="#8fd0f5" fill-opacity=".3" stroke="#8fd0f5"/>' +
+        '<path d="M27.5 15.5 q2 -2.6 5 -2.8" stroke="#fff" stroke-width="1.6" opacity=".85"/>' +
+      '</svg>',
+    rocket:
+      '<svg viewBox="0 0 64 64" fill="none" stroke="#3796d0" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">' +
+        '<path class="fx-flame" d="M27 47 Q32 63 37 47" fill="#8fd0f5" fill-opacity=".85" stroke="#8fd0f5" stroke-width="1.6"/>' +
+        '<path d="M24 36 L15 48 L25 45Z M40 36 L49 48 L39 45Z" fill="#0d1b2a"/>' +
+        '<path d="M32 5 C42 14 45 30 40 46 H24 C19 30 22 14 32 5Z" fill="#0d1b2a"/>' +
+        '<circle cx="32" cy="24" r="5" fill="#8fd0f5" fill-opacity=".3" stroke="#8fd0f5"/>' +
+        '<path d="M26.5 13.5 H37.5" stroke-width="1.6" opacity=".7"/>' +
+      '</svg>',
+    saucer:
+      '<svg viewBox="0 0 64 64" fill="none" stroke="#3796d0" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">' +
+        '<path d="M44 40 L50 50 M20 40 L14 50" stroke-width="1.8" opacity=".6"/>' +
+        '<path d="M22 31 a10 10 0 0 1 20 0" fill="#8fd0f5" fill-opacity=".3" stroke="#8fd0f5"/>' +
+        '<ellipse cx="32" cy="35" rx="24" ry="7" fill="#0d1b2a"/>' +
+        '<circle class="fx-light" cx="20" cy="36" r="1.8" fill="#8fd0f5" stroke="none"/>' +
+        '<circle class="fx-light" cx="32" cy="38.5" r="1.8" fill="#8fd0f5" stroke="none"/>' +
+        '<circle class="fx-light" cx="44" cy="36" r="1.8" fill="#8fd0f5" stroke="none"/>' +
+      '</svg>'
+  };
+
+  var small = window.innerWidth < 640;
+  var crew = (small ? ['astronaut', 'rocket', 'saucer'] : ['astronaut', 'rocket', 'astronaut', 'saucer', 'rocket']).map(function (kind) {
+    var el = document.createElement('div');
+    el.className = 'fx-crew fx-' + kind;
+    el.innerHTML = CREW_ART[kind];
+    ambient.insertBefore(el, ambient.querySelector('.fx-cursor'));
+    var size = (kind === 'astronaut' ? 36 : 32) * (small ? 0.8 : 1) * (0.85 + Math.random() * 0.4);
+    el.style.width = el.style.height = size.toFixed(0) + 'px';
+    var speed = kind === 'rocket' ? 34 + Math.random() * 14 : kind === 'saucer' ? 20 : 8 + Math.random() * 6;
+    var angle = kind === 'saucer' ? (Math.random() < 0.5 ? 0 : Math.PI) : Math.random() * 6.283;
+    return {
+      el: el, kind: kind, size: size,
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed,
+      rot: Math.random() * 360,
+      spin: kind === 'astronaut' ? (Math.random() < 0.5 ? -1 : 1) * (5 + Math.random() * 8) : 0,
+      phase: Math.random() * 6.283
+    };
+  });
+
+  function moveCrew(dt, t) {
+    crew.forEach(function (c) {
+      c.x += c.vx * dt;
+      c.y += c.vy * dt;
+      c.rot += c.spin * dt;
+      var m = c.size * 2;
+      if (c.x < -m) c.x = W + m; else if (c.x > W + m) c.x = -m;
+      if (c.y < -m) c.y = H + m; else if (c.y > H + m) c.y = -m;
+      var rot = c.kind === 'rocket' ? Math.atan2(c.vy, c.vx) * 57.296 + 90
+              : c.kind === 'saucer' ? Math.sin(t * 0.0015 + c.phase) * 8
+              : c.rot;
+      var bob = c.kind === 'rocket' ? 0 : Math.sin(t * 0.001 + c.phase) * 6;
+      c.el.style.transform = 'translate3d(' + c.x.toFixed(1) + 'px,' + (c.y + bob).toFixed(1) + 'px,0) rotate(' + rot.toFixed(1) + 'deg)';
+    });
+  }
+
+  seedSky();
+  window.addEventListener('resize', function () { seedSky(); if (reduce) drawSky(0); });
+  if (reduce) {
+    drawSky(0);
+    moveCrew(0, 0);
+  } else {
+    var last = 0;
+    var frame = function (t) {
+      requestAnimationFrame(frame);
+      if (t - last < 33) return;   // ~30 fps keeps the glass blur cheap
+      var dt = Math.min((t - last) / 1000, 0.1);
+      last = t;
+      stepMeteor(dt);
+      drawSky(t);
+      moveCrew(dt, t);
+    };
+    requestAnimationFrame(frame);
+  }
+
   if (finePointer && !reduce) {
     var cursor = ambient.querySelector('.fx-cursor');
     var tx = 0, ty = 0, cx = 0, cy = 0, running = false;
@@ -105,7 +274,7 @@
 
   // ── Images: tilt toward the pointer ──────────────────────────
   if (finePointer && !reduce) {
-    document.querySelectorAll('.project-img, .screenshot-wrap, .gallery-img, .photo-wrap, .org-box').forEach(function (el) {
+    document.querySelectorAll('.project-img, .screenshot-wrap, .gallery-img, .photo-wrap').forEach(function (el) {
       el.classList.add('fx-tilt');
       el.addEventListener('pointermove', function (e) {
         var r = el.getBoundingClientRect();

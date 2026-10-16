@@ -131,118 +131,169 @@
       gap: 1em;
     }
 
-    /* ── Tech stack architecture diagram ────────────────────────── */
-    .stack-diagram {
+    /* ── Tech stack: request flow + layer grid ───────────────────── */
+    .stack {
+      border-radius: 24px;
+      padding: clamp(20px, 3vw, 36px);
       display: flex;
       flex-direction: column;
-      position: relative;
+      gap: clamp(22px, 3.2vh, 34px);
     }
 
-    /* Vertical spine running down the left */
-    .stack-diagram::before {
-      content: '';
-      position: absolute;
-      left: calc(clamp(48px, 6vw, 90px) / 2);
-      top: 0;
-      bottom: 0;
-      width: 2px;
-      background: linear-gradient(to bottom,
-        transparent,
-        var(--blue) 8%,
-        var(--blue) 92%,
-        transparent
-      );
-      opacity: 0.4;
-    }
-
-    @keyframes slide-in {
-      from { opacity: 0; transform: translateX(-18px); }
-      to   { opacity: 1; transform: translateX(0); }
-    }
-
-    .stack-layer {
+    .stack-head {
       display: flex;
-      align-items: center;
-      gap: clamp(16px, 2.5vw, 40px);
-      padding: clamp(14px, 2vh, 28px) 0;
-      border-bottom: 1px solid rgba(55, 150, 208, 0.15);
-      animation: slide-in 400ms var(--ease-bounce) both;
-      animation-delay: var(--delay, 0s);
-    }
-    .stack-layer:last-child { border-bottom: none; }
-
-    /* Layer node — circle on the spine */
-    .layer-node {
-      flex-shrink: 0;
-      width: clamp(48px, 6vw, 90px);
-      height: clamp(48px, 6vw, 90px);
-      border: 2px solid var(--blue);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      z-index: 1;
-    }
-    .layer-node img {
-      width: 55%;
-      height: 55%;
-      object-fit: contain;
-    }
-    /* For layers with no single icon — show category letter */
-    .layer-node span {
-      font-family: 'Splatink', cursive;
-      font-size: clamp(14px, 1.5vw, 24px);
-      color: var(--blue);
-    }
-
-    /* Right side content */
-    .layer-content {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: clamp(6px, 1vh, 12px);
-    }
-
-    .layer-name {
-      font-family: 'Splatink', cursive;
-      font-size: clamp(13px, 1.1vw, 20px);
-      color: var(--blue);
-      opacity: 0.6;
-      letter-spacing: 0.08em;
-    }
-
-    .layer-techs {
-      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
       flex-wrap: wrap;
-      gap: clamp(8px, 1.5vw, 20px);
-      align-items: center;
+      gap: 6px 16px;
     }
-
-    .tech-chip {
-      display: flex;
-      align-items: center;
-      gap: clamp(5px, 0.7vw, 10px);
-      border: 1.5px solid rgba(55, 150, 208, 0.5);
-      border-radius: 999px;
-      padding: clamp(4px, 0.6vh, 8px) clamp(10px, 1.2vw, 18px);
-      transition: border-color 150ms ease, transform 100ms var(--ease-bounce);
+    .stack-title {
+      font-family: 'Splatink', cursive;
+      font-weight: normal;
+      font-size: clamp(24px, 2.1vw, 38px);
+      line-height: 1;
+      color: var(--blue);
     }
-    .tech-chip:hover {
-      border-color: var(--blue);
-      transform: translateY(-2px);
-    }
-    .tech-chip img {
-      width: clamp(16px, 1.5vw, 26px);
-      height: clamp(16px, 1.5vw, 26px);
-      object-fit: contain;
-      display: block;
-    }
-    .tech-chip span {
+    .stack-meta,
+    .stack-col dt,
+    .flow-proto {
       font-family: 'Du Bellay', serif;
-      font-size: var(--font-nav);
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      color: var(--blue);
+    }
+    .stack-meta { font-size: clamp(11px, .9vw, 16px); opacity: .65; }
+
+    /* Request flow: icons on row 1, names on row 2 */
+    .flow {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto minmax(0, 1fr) auto;
+      grid-template-rows: auto auto;
+      align-items: center;
+      column-gap: clamp(8px, 1.4vw, 18px);
+      row-gap: 10px;
+    }
+    .flow-icon {
+      width: clamp(48px, 4.4vw, 68px);
+      height: clamp(48px, 4.4vw, 68px);
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      background: radial-gradient(circle at 30% 20%, rgba(143, 208, 245, .16), rgba(55, 150, 208, .05) 70%);
+      box-shadow:
+        inset 0 0 0 1px rgba(143, 208, 245, .3),
+        inset 0 1px 1px rgba(255, 255, 255, .18),
+        0 0 24px rgba(55, 150, 208, .15);
+      transition: transform 200ms var(--ease-bounce), box-shadow 200ms ease;
+    }
+    .flow-icon:hover {
+      transform: translateY(-3px);
+      box-shadow:
+        inset 0 0 0 1px rgba(143, 208, 245, .6),
+        inset 0 1px 1px rgba(255, 255, 255, .25),
+        0 0 30px rgba(55, 150, 208, .4);
+    }
+    .flow-icon img {
+      width: clamp(24px, 2.3vw, 36px);
+      height: clamp(24px, 2.3vw, 36px);
+      object-fit: contain;
+    }
+    .flow-name {
+      grid-row: 2;
+      justify-self: center;
+      font-family: 'Du Bellay', serif;
+      font-size: clamp(12px, 1vw, 18px);
       color: var(--blue);
       white-space: nowrap;
+    }
+    .flow-name:nth-of-type(1) { grid-column: 1; }
+    .flow-name:nth-of-type(2) { grid-column: 3; }
+    .flow-name:nth-of-type(3) { grid-column: 5; }
+
+    .flow-link {
+      position: relative;
+      height: 2px;
+      border-radius: 2px;
+      background: linear-gradient(90deg, rgba(55, 150, 208, .12), rgba(55, 150, 208, .6) 50%, rgba(55, 150, 208, .12));
+    }
+    .flow-proto {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: clamp(9px, .72vw, 13px);
+      white-space: nowrap;
+      opacity: .7;
+    }
+    /* Request packet out, response packet back */
+    .flow-link i {
+      position: absolute;
+      top: 50%;
+      width: 7px;
+      height: 7px;
+      margin-top: -3.5px;
+      border-radius: 50%;
+      background: #8fd0f5;
+      box-shadow: 0 0 10px #3796d0, 0 0 3px #fff;
+      animation: packet-out 2.6s ease-in-out infinite;
+    }
+    .flow-link i + i {
+      background: #3796d0;
+      box-shadow: 0 0 8px #3796d0;
+      animation-name: packet-back;
+      animation-delay: 1.3s;
+    }
+    .flow-link--db i { animation-delay: .65s; }
+    .flow-link--db i + i { animation-delay: 1.95s; }
+    @keyframes packet-out {
+      0%   { left: 0; opacity: 0; }
+      12%, 80% { opacity: 1; }
+      100% { left: calc(100% - 7px); opacity: 0; }
+    }
+    @keyframes packet-back {
+      0%   { left: calc(100% - 7px); opacity: 0; }
+      12%, 80% { opacity: .8; }
+      100% { left: 0; opacity: 0; }
+    }
+
+    /* Layer grid */
+    .stack-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      row-gap: 22px;
+      padding-top: clamp(18px, 2.6vh, 26px);
+      border-top: 1px solid rgba(55, 150, 208, .2);
+    }
+    .stack-col {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      min-width: 0;
+      padding: 0 clamp(10px, 1.4vw, 20px);
+      border-left: 1px solid rgba(55, 150, 208, .16);
+    }
+    .stack-col:first-child { padding-left: 0; border-left: none; }
+    .stack-col dt { font-size: clamp(10px, .8vw, 14px); opacity: .6; }
+    .stack-col dd {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      column-gap: 10px;
+      align-items: center;
+      font-family: 'Du Bellay', serif;
+      color: var(--blue);
+    }
+    .stack-col dd img {
+      grid-row: span 2;
+      width: clamp(18px, 1.5vw, 26px);
+      height: clamp(18px, 1.5vw, 26px);
+      object-fit: contain;
+    }
+    .tech-name { font-size: clamp(14px, 1.15vw, 21px); line-height: 1.15; }
+    .tech-note { font-size: clamp(11px, .8vw, 14px); line-height: 1.2; opacity: .6; }
+
+    @media (max-width: 600px) {
+      .stack-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .stack-col:nth-child(3) { padding-left: 0; border-left: none; }
     }
 
     /* ── TOC nav ─────────────────────────────────────────────────── */
@@ -318,57 +369,46 @@
     <p>Stack: Flutter frontend, Node.js/Express REST API, MySQL database with optimized multi-join queries across 8 tables, JWT authentication, and bcrypt security. Designed as a replicable digitization model for Urban Agencies across Morocco.</p>
   </div>
 
-  <!-- Tech stack — architecture layers -->
-  <div class="stack-diagram">
+  <!-- Tech stack -->
+  <section class="stack glass" aria-labelledby="stack-title">
+    <header class="stack-head">
+      <h2 class="stack-title" id="stack-title">Tech stack</h2>
+      <span class="stack-meta">FESURBAN · 3-tier architecture</span>
+    </header>
 
-    <!-- Frontend -->
-    <div class="stack-layer" style="--delay: 0.05s">
-      <div class="layer-node"><img src="assets/tech/flutter.svg" alt="" /></div>
-      <div class="layer-content">
-        <span class="layer-name">Frontend</span>
-        <div class="layer-techs">
-          <div class="tech-chip glass"><img src="assets/tech/flutter.svg" alt="Flutter" /><span>Flutter</span></div>
-          <div class="tech-chip glass"><img src="assets/tech/dart.svg"    alt="Dart"    /><span>Dart</span></div>
-        </div>
-      </div>
+    <div class="flow" aria-hidden="true">
+      <div class="flow-icon"><img src="assets/tech/flutter.svg" alt="" /></div>
+      <div class="flow-link"><span class="flow-proto">REST · JWT</span><i></i><i></i></div>
+      <div class="flow-icon"><img src="assets/tech/nodejs.svg" alt="" /></div>
+      <div class="flow-link flow-link--db"><span class="flow-proto">SQL</span><i></i><i></i></div>
+      <div class="flow-icon"><img src="assets/tech/mysql.svg" alt="" /></div>
+      <span class="flow-name">Mobile app</span>
+      <span class="flow-name">API server</span>
+      <span class="flow-name">Database</span>
     </div>
 
-    <!-- Backend -->
-    <div class="stack-layer" style="--delay: 0.15s">
-      <div class="layer-node"><img src="assets/tech/nodejs.svg" alt="" /></div>
-      <div class="layer-content">
-        <span class="layer-name">Backend</span>
-        <div class="layer-techs">
-          <div class="tech-chip glass"><img src="assets/tech/nodejs.svg"  alt="Node.js"    /><span>Node.js</span></div>
-          <div class="tech-chip glass"><img src="assets/tech/express.svg" alt="Express.js" /><span>Express.js</span></div>
-        </div>
+    <dl class="stack-grid">
+      <div class="stack-col">
+        <dt>Frontend</dt>
+        <dd><img src="assets/tech/flutter.svg" alt="" /><span class="tech-name">Flutter</span><span class="tech-note">Cross-platform UI</span></dd>
+        <dd><img src="assets/tech/dart.svg" alt="" /><span class="tech-name">Dart</span><span class="tech-note">App logic</span></dd>
       </div>
-    </div>
-
-    <!-- Database -->
-    <div class="stack-layer" style="--delay: 0.25s">
-      <div class="layer-node"><img src="assets/tech/mysql.svg" alt="" /></div>
-      <div class="layer-content">
-        <span class="layer-name">Database</span>
-        <div class="layer-techs">
-          <div class="tech-chip glass"><img src="assets/tech/mysql.svg" alt="MySQL" /><span>MySQL</span></div>
-        </div>
+      <div class="stack-col">
+        <dt>Backend</dt>
+        <dd><img src="assets/tech/nodejs.svg" alt="" /><span class="tech-name">Node.js</span><span class="tech-note">Runtime</span></dd>
+        <dd><img src="assets/tech/express.svg" alt="" /><span class="tech-name">Express.js</span><span class="tech-note">REST API</span></dd>
       </div>
-    </div>
-
-    <!-- Security -->
-    <div class="stack-layer" style="--delay: 0.35s">
-      <div class="layer-node"><img src="assets/tech/jwt.svg" alt="" /></div>
-      <div class="layer-content">
-        <span class="layer-name">Security</span>
-        <div class="layer-techs">
-          <div class="tech-chip glass"><img src="assets/tech/jwt.svg"    alt="JWT"    /><span>JWT</span></div>
-          <div class="tech-chip glass"><img src="assets/tech/bcrypt.png" alt="bcrypt" /><span>bcrypt</span></div>
-        </div>
+      <div class="stack-col">
+        <dt>Database</dt>
+        <dd><img src="assets/tech/mysql.svg" alt="" /><span class="tech-name">MySQL</span><span class="tech-note">8 tables, multi-join queries</span></dd>
       </div>
-    </div>
-
-  </div>
+      <div class="stack-col">
+        <dt>Security</dt>
+        <dd><img src="assets/tech/jwt.svg" alt="" /><span class="tech-name">JWT</span><span class="tech-note">Stateless auth</span></dd>
+        <dd><img src="assets/tech/bcrypt.png" alt="" /><span class="tech-name">bcrypt</span><span class="tech-note">Password hashing</span></dd>
+      </div>
+    </dl>
+  </section>
 
   <!-- TOC nav -->
   <nav class="glass" aria-label="Table of contents">

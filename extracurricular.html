@@ -112,25 +112,92 @@
       align-items: center;
     }
 
-    /* Org logo — square bordered box, 180×180 in Figma */
+    /* Org logo — floating liquid-glass bubble */
     .org-box {
       flex-shrink: 0;
-      width: clamp(80px, 9.4vw, 180px);
+      width: clamp(104px, 9.4vw, 170px);
       aspect-ratio: 1;
-      border: 1.5px solid var(--blue);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      padding: 0;
+      border-radius: 50%;
+      position: relative;
+      display: grid;
+      place-items: center;
+      isolation: isolate;
+      background:
+        radial-gradient(circle at 50% 50%, rgba(55, 150, 208, 0) 56%, rgba(55, 150, 208, .2) 100%),
+        rgba(55, 150, 208, .05);
+      -webkit-backdrop-filter: blur(6px) saturate(160%);
+      backdrop-filter: blur(6px) saturate(160%);
+      box-shadow:
+        inset 0 0 0 1px rgba(143, 208, 245, .32),
+        inset -10px -14px 26px rgba(0, 133, 216, .24),
+        inset 8px 10px 22px rgba(255, 255, 255, .05),
+        0 20px 40px rgba(0, 0, 0, .45),
+        0 0 36px rgba(55, 150, 208, .16);
+      animation:
+        bubble-float 7s ease-in-out infinite,
+        bubble-wobble 9s ease-in-out infinite;
+      animation-delay: var(--bd, 0s);
+      transition: scale 400ms var(--ease-bounce);
     }
-    .org-box img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
+    .org-box:hover { scale: 1.07; }
+
+    /* Iridescent soap-film rim, slowly turning */
+    .org-box::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      border-radius: inherit;
+      padding: 2px;
+      background: conic-gradient(
+        rgba(143, 208, 245, .75), rgba(55, 150, 208, .08),
+        rgba(170, 235, 255, .55), rgba(0, 133, 216, .12),
+        rgba(143, 208, 245, .75));
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+      animation: bubble-film 10s linear infinite;
+    }
+
+    /* Specular glint, top-left */
+    .org-box::after {
+      content: "";
+      position: absolute;
+      top: 11%;
+      left: 19%;
+      width: 28%;
+      height: 14%;
+      border-radius: 50%;
+      background: radial-gradient(ellipse, rgba(255, 255, 255, .6), transparent 70%);
+      rotate: -32deg;
       pointer-events: none;
     }
-    .org-box--padded { padding: 3%; }
+
+    .org-box img {
+      width: 62%;
+      height: 62%;
+      object-fit: contain;
+      pointer-events: none;
+      filter: drop-shadow(0 0 10px rgba(55, 150, 208, .35));
+      animation: bubble-drift 7s ease-in-out infinite;
+      animation-delay: var(--bd, 0s);
+    }
+
+    @keyframes bubble-float {
+      0%, 100% { translate: 0 0; }
+      50%      { translate: 0 -8px; }
+    }
+    @keyframes bubble-wobble {
+      0%, 100% { border-radius: 50%; }
+      25%      { border-radius: 53% 47% 50% 50% / 48% 52% 48% 52%; }
+      50%      { border-radius: 48% 52% 47% 53% / 52% 48% 53% 47%; }
+      75%      { border-radius: 51% 49% 53% 47% / 47% 53% 49% 51%; }
+    }
+    @keyframes bubble-film { to { rotate: 360deg; } }
+    @keyframes bubble-drift {
+      0%, 100% { translate: 0 0;      rotate: -3deg; }
+      50%      { translate: 0 3px;    rotate: 3deg; }
+    }
 
     /* Role + dates */
     .entry-role {
@@ -221,7 +288,7 @@
   <!-- ── Entry 1: ADEAM ── -->
   <div class="entry">
     <div class="entry-header">
-      <div class="org-box org-box--padded">
+      <div class="org-box" style="--bd: 0s">
         <img src="assets/ade.webp" alt="ADEAM logo" />
       </div>
       <p class="entry-role">President, ADEAM — </br> Association des Élèves Ingénieurs Arts &amp; Métiers<br/>2024 – 2025</p>
@@ -236,8 +303,8 @@
   <!-- ── Entry 2: Space Club ── -->
   <div class="entry">
     <div class="entry-header">
-      <div class="org-box">
-        <img src="assets/spaceclub.png" alt="Space Club logo" />
+      <div class="org-box" style="--bd: -2.4s">
+        <img src="assets/spaceclub.webp" alt="Space Club logo" />
       </div>
       <p class="entry-role">President, Space Club </br>Arts &amp; Métiers<br/>2024 – 2025</p>
     </div>
@@ -250,8 +317,8 @@
   <!-- ── Entry 3: FAME ── -->
   <div class="entry">
     <div class="entry-header">
-      <div class="org-box">
-        <img src="assets/fame.png" alt="FAME logo" />
+      <div class="org-box" style="--bd: -4.8s">
+        <img src="assets/fame.webp" alt="FAME logo" />
       </div>
       <p class="entry-role">Media Coordinator, Forum Arts &amp; Métiers Entreprises (FAME) </br> 21st Edition<br/>Nov 2023 – Jul 2024</p>
     </div>
