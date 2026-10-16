@@ -126,6 +126,53 @@ h1, h2, h3, p, dl, dd, figure { margin: 0; }
 }
 .glass:hover::before { opacity: 1; }
 
+/* ── Liquid glass: nav bar, contents list, buttons ────────────────
+   Nearly clear material. In Chromium, site.js bends the backdrop
+   through a per-element lens (--lg); elsewhere a frosted backing
+   stands in. Light comes from the top left. */
+:is(.topbar-inner, .toc, .btn, .socials a, .next, .channel) {
+  --lg-blur: 14px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, .07), rgba(255, 255, 255, .015) 40%, rgba(255, 255, 255, 0) 60%, rgba(255, 255, 255, .03)),
+    rgba(10, 16, 28, .22);
+  -webkit-backdrop-filter: var(--lg,) blur(var(--lg-blur)) saturate(180%) brightness(1.08);
+  backdrop-filter: var(--lg,) blur(var(--lg-blur)) saturate(180%) brightness(1.08);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .32),
+    inset 1px 0 0 rgba(255, 255, 255, .1),
+    inset 0 -1px 0 rgba(255, 255, 255, .12),
+    inset 0 0 0 1px rgba(255, 255, 255, .04),
+    inset 0 10px 22px -12px rgba(255, 255, 255, .14),
+    inset 0 -12px 20px -14px rgba(143, 208, 245, .18),
+    0 1px 2px rgba(0, 0, 0, .35),
+    0 10px 30px -10px rgba(0, 0, 0, .6);
+}
+/* With real refraction the glass can be much clearer */
+.refract :is(.toc, .btn, .socials a, .next, .channel) { --lg-blur: 1.5px; }
+.refract .topbar-inner { --lg-blur: 5px; }
+
+/* Specular rim: bright top-left and bottom-right edges */
+:is(.topbar-inner, .toc, .btn, .socials a, .next, .channel)::after {
+  background: linear-gradient(135deg,
+    rgba(255, 255, 255, .55) 0%,
+    rgba(255, 255, 255, .12) 22%,
+    rgba(255, 255, 255, 0) 45%,
+    rgba(255, 255, 255, 0) 60%,
+    rgba(255, 255, 255, .1) 80%,
+    rgba(255, 255, 255, .38) 100%);
+}
+/* Pointer catches the light */
+:is(.topbar-inner, .toc, .btn, .socials a, .next, .channel)::before {
+  background: radial-gradient(160px circle at var(--mx, 50%) var(--my, -40%), rgba(255, 255, 255, .14), transparent 70%);
+}
+
+/* Controls give under the finger and spring back */
+:is(.btn, .socials a, .next, .channel) {
+  transition: scale .45s cubic-bezier(.3, 1.5, .5, 1), background-color .2s ease, box-shadow .2s ease, color .2s ease;
+}
+:is(.btn, .socials a, .next, .channel):active { scale: .96; transition-duration: .12s; }
+:is(.btn, .socials a, .next, .channel):hover { background-color: rgba(143, 208, 245, .06); }
+
 /* ── Glossy AR mark ───────────────────────────────────────────── */
 .mark {
   position: relative;
@@ -282,7 +329,7 @@ a:hover .mark::after,
   cursor: pointer;
   transition: background-color .2s ease, box-shadow .2s ease;
 }
-.btn:hover { background-color: rgba(143, 208, 245, .08); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .12), 0 0 0 1px rgba(143, 208, 245, .3), 0 6px 16px -6px rgba(0, 0, 0, .6); }
+.btn:hover { color: var(--ink); }
 .btn svg { width: 16px; height: 16px; flex-shrink: 0; }
 
 .link {
@@ -725,9 +772,9 @@ a:hover .arrow { translate: 2px -2px; }
   display: grid;
   place-items: center;
   color: var(--ink-dim);
-  transition: color .2s ease, translate .25s var(--ease);
+  transition: scale .45s cubic-bezier(.3, 1.5, .5, 1), color .2s ease, background-color .2s ease;
 }
-.socials a:hover { color: var(--accent-hi); translate: 0 -2px; }
+.socials a:hover { color: var(--accent-hi); }
 .socials svg { width: 18px; height: 18px; fill: currentColor; }
 
 @media (max-width: 520px) {

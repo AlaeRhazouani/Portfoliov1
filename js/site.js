@@ -307,6 +307,104 @@
   window.addEventListener('resize', progress);
   progress();
 
+  // ── Liquid glass: real refraction (Chromium) ─────────────────
+  // Each control gets a displacement map built from its own rounded
+  // shape: neutral in the middle, bending the backdrop inward across a
+  // bezel near the edge, like a thick convex lens. Red, green and blue
+  // are displaced by slightly different amounts for a faint prism
+  // fringe. Other browsers keep the rim, highlight and frosted backing.
+  var LIQUID = '.topbar-inner, .toc, .btn, .socials a, .next, .channel';
+  var refracts = !!window.chrome && CSS.supports('backdrop-filter', 'blur(1px)');
+
+  function liquidMap(W, H, R, bezel) {
+    var c = document.createElement('canvas');
+    c.width = W;
+    c.height = H;
+    var ctx = c.getContext('2d'), img = ctx.createImageData(W, H), d = img.data;
+    var hw = W / 2, hh = H / 2;
+    // Signed distance to the rounded rectangle, negative inside
+    function sd(x, y) {
+      var qx = Math.abs(x - hw) - (hw - R), qy = Math.abs(y - hh) - (hh - R);
+      var ox = Math.max(qx, 0), oy = Math.max(qy, 0);
+      return Math.sqrt(ox * ox + oy * oy) + Math.min(Math.max(qx, qy), 0) - R;
+    }
+    for (var y = 0; y < H; y++) {
+      for (var x = 0; x < W; x++) {
+        var px = x + 0.5, py = y + 0.5, depth = -sd(px, py), dx = 0, dy = 0;
+        if (depth >= 0 && depth < bezel) {
+          var gx = sd(px + 0.5, py) - sd(px - 0.5, py);
+          var gy = sd(px, py + 0.5) - sd(px, py - 0.5);
+          var gl = Math.sqrt(gx * gx + gy * gy) || 1;
+          // Lens profile: strongest at the rim, flat inside. Quadratic so
+          // the mapping never folds back on itself (no smeared bands).
+          var t = depth / bezel, m = (1 - t) * (1 - t);
+          dx = -(gx / gl) * m;   // sample inward: the rim magnifies
+          dy = -(gy / gl) * m;
+        }
+        var i = (y * W + x) * 4;
+        d[i] = 128 + dx * 127;
+        d[i + 1] = 128 + dy * 127;
+        d[i + 2] = 128;
+        d[i + 3] = 255;
+      }
+    }
+    ctx.putImageData(img, 0, 0);
+    return c.toDataURL();
+  }
+
+  if (refracts) {
+    var NS = 'http://www.w3.org/2000/svg';
+    var defs = document.createElementNS(NS, 'svg');
+    defs.setAttribute('aria-hidden', 'true');
+    defs.setAttribute('width', '0');
+    defs.setAttribute('height', '0');
+    defs.style.position = 'absolute';
+    document.body.appendChild(defs);
+
+    var CHANNELS = [
+      ['1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0', 1],
+      ['0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0', 0.94],
+      ['0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0', 0.88]
+    ];
+
+    document.querySelectorAll(LIQUID).forEach(function (el, n) {
+      var id = 'liquid-' + n;
+      var filter = document.createElementNS(NS, 'filter');
+      filter.setAttribute('id', id);
+      filter.setAttribute('filterUnits', 'userSpaceOnUse');
+      filter.setAttribute('color-interpolation-filters', 'sRGB');
+      defs.appendChild(filter);
+
+      var lastSize = '';
+      function build() {
+        var W = Math.round(el.offsetWidth), H = Math.round(el.offsetHeight);
+        if (!W || !H || W + 'x' + H === lastSize) return;
+        lastSize = W + 'x' + H;
+        var R = Math.min(parseFloat(getComputedStyle(el).borderTopLeftRadius) || 0, W / 2, H / 2);
+        var bezel = Math.min(Math.max(18, Math.min(W, H) * 0.14), 32, W / 2, H / 2);
+        // Max shift is about scale/2 and must stay under bezel/2 for the
+        // quadratic profile, or the image would fold at the rim.
+        var scale = bezel * 0.9;
+        var map = liquidMap(W, H, R, bezel);
+        var parts = '<feImage href="' + map + '" x="0" y="0" width="' + W + '" height="' + H + '" preserveAspectRatio="none" result="map"/>';
+        CHANNELS.forEach(function (ch, k) {
+          parts += '<feDisplacementMap in="SourceGraphic" in2="map" scale="' + (scale * ch[1]).toFixed(1) + '" xChannelSelector="R" yChannelSelector="G" result="d' + k + '"/>' +
+                   '<feColorMatrix in="d' + k + '" type="matrix" values="' + ch[0] + '" result="c' + k + '"/>';
+        });
+        parts += '<feBlend in="c0" in2="c1" mode="screen" result="c01"/><feBlend in="c01" in2="c2" mode="screen"/>';
+        filter.setAttribute('x', '0');
+        filter.setAttribute('y', '0');
+        filter.setAttribute('width', W);
+        filter.setAttribute('height', H);
+        filter.innerHTML = parts;
+        el.style.setProperty('--lg', 'url(#' + id + ')');
+      }
+      build();
+      if ('ResizeObserver' in window) new ResizeObserver(build).observe(el);
+    });
+    doc.classList.add('refract');
+  }
+
   // ── Glass: highlight follows the pointer ─────────────────────
   if (finePointer) {
     document.querySelectorAll('.glass').forEach(function (el) {
