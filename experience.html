@@ -131,6 +131,15 @@
       gap: 1em;
     }
 
+    /* Full screenshot at its natural ratio */
+    .screenshot-wrap--full { aspect-ratio: auto; }
+    .screenshot-wrap--full img {
+      position: static;
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
     /* ── One job = info, description, stack ─────────────────────── */
     .job {
       display: flex;
@@ -366,6 +375,10 @@
 
   <!-- ── OCP Phosboucraa · PFA internship 2026 ── -->
   <article class="job">
+
+  <div class="screenshot-wrap screenshot-wrap--full">
+    <img src="assets/ocp-dashboard.webp" alt="OCP Phosboucraa desalination cost dashboard: weekly energy, production and specific consumption trends, with the Cost Assistant answering a question" />
+  </div>
 
   <div class="job-info">
     <p>Engineering Intern (PFA)</p>
