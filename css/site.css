@@ -1,7 +1,7 @@
 /* ─────────────────────────────────────────────────────────────────
    Alae Rhazouani — site styles
    Layout: one calm reading column over a deep-space backdrop
-   (stars, slow aurora, planet horizon). Glass is reserved for
+   (stars, Milky Way dust, planet limb). Glass is reserved for
    navigation and data panels; type does the rest.
    ───────────────────────────────────────────────────────────────── */
 
@@ -11,7 +11,7 @@
   --bg-raise:    #0a121d;
   --ink:         #e6edf5;
   --ink-dim:     #93a4b8;
-  --ink-faint:   #5f7187;
+  --ink-faint:   #7f91a7;
   --accent:      #3796d0;
   --accent-hi:   #8fd0f5;
   --line:        rgba(143, 208, 245, .12);
@@ -58,7 +58,7 @@ a { color: inherit; }
 h1, h2, h3, p, dl, dd, figure { margin: 0; }
 ::selection { background: rgba(55, 150, 208, .35); color: #fff; }
 
-/* ── Deep-space backdrop ──────────────────────────────────────── */
+/* ── Deep-space backdrop (painted by site.js) ───────────────── */
 .space {
   position: fixed;
   inset: 0;
@@ -66,60 +66,18 @@ h1, h2, h3, p, dl, dd, figure { margin: 0; }
   overflow: hidden;
   pointer-events: none;
   background:
-    radial-gradient(120% 80% at 50% -10%, rgba(17, 38, 64, .55), transparent 60%),
+    radial-gradient(140% 90% at 70% -20%, rgba(14, 30, 52, .6), transparent 60%),
     var(--bg);
 }
-.space canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
-
-/* Aurora: two very soft bands that drift and breathe */
-.aurora {
-  position: absolute;
-  inset: -20% -10% auto;
-  height: 70vh;
-  filter: blur(60px);
-  opacity: .55;
-  mix-blend-mode: screen;
-}
-.aurora::before,
-.aurora::after {
+.space canvas { position: absolute; left: 0; will-change: transform; }
+.space .sky { top: 0; }
+.space .planet { bottom: 0; }
+/* Fine film grain over everything, like a long-exposure photograph */
+.space::after {
   content: "";
   position: absolute;
-  border-radius: 50%;
-}
-.aurora::before {
-  width: 70vw; height: 38vh; left: 4vw; top: 18vh;
-  background: radial-gradient(closest-side, rgba(55, 150, 208, .55), transparent);
-  animation: aurora-a 38s ease-in-out infinite alternate;
-}
-.aurora::after {
-  width: 55vw; height: 30vh; right: 0; top: 8vh;
-  background: radial-gradient(closest-side, rgba(70, 110, 230, .4), transparent);
-  animation: aurora-b 46s ease-in-out infinite alternate;
-}
-@keyframes aurora-a {
-  0%   { translate: 0 0;      scale: 1 1;    rotate: -6deg; }
-  100% { translate: 18vw 6vh; scale: 1.2 .8; rotate: 4deg; }
-}
-@keyframes aurora-b {
-  0%   { translate: 0 0;        scale: 1 1; }
-  100% { translate: -22vw 10vh; scale: .8 1.25; }
-}
-
-/* Planet horizon: a dark limb with a thin atmospheric rim */
-.planet {
-  position: absolute;
-  left: 50%;
-  top: calc(100% - clamp(48px, 9vh, 96px));
-  width: 240vmax;
-  aspect-ratio: 1;
-  translate: -50% 0;
-  border-radius: 50%;
-  background: radial-gradient(circle at 50% 0%, #0b1828 0%, #050a12 18%, var(--bg) 40%);
-  box-shadow:
-    inset 0 1.5px 0 rgba(190, 230, 255, .55),
-    inset 0 14px 40px -12px rgba(143, 208, 245, .35),
-    0 -2px 22px rgba(143, 208, 245, .28),
-    0 -30px 120px rgba(55, 150, 208, .22);
+  inset: 0;
+  background-image: var(--grain, none);
 }
 
 /* Everything readable sits above the backdrop */
@@ -130,13 +88,16 @@ h1, h2, h3, p, dl, dd, figure { margin: 0; }
   position: relative;
   isolation: isolate;
   background:
-    linear-gradient(160deg, rgba(143, 208, 245, .08), transparent 40%),
+    linear-gradient(180deg, rgba(255, 255, 255, .045), rgba(255, 255, 255, .01) 38%, transparent),
     var(--glass);
-  -webkit-backdrop-filter: blur(16px) saturate(140%);
-  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%) brightness(1.05);
+  backdrop-filter: blur(20px) saturate(160%) brightness(1.05);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, .07),
-    0 24px 48px -24px rgba(0, 0, 0, .7);
+    inset 0 1px 0 rgba(255, 255, 255, .09),
+    inset 0 -1px 0 rgba(0, 0, 0, .25),
+    0 1px 2px rgba(0, 0, 0, .35),
+    0 8px 24px -6px rgba(0, 0, 0, .45),
+    0 30px 60px -30px rgba(0, 0, 0, .7);
 }
 /* Rim light, brightest on the top-left edge */
 .glass::after {
@@ -145,7 +106,7 @@ h1, h2, h3, p, dl, dd, figure { margin: 0; }
   inset: 0;
   border-radius: inherit;
   padding: 1px;
-  background: linear-gradient(140deg, rgba(190, 230, 255, .32), rgba(143, 208, 245, .08) 40%, rgba(143, 208, 245, .04) 70%, rgba(143, 208, 245, .16));
+  background: linear-gradient(170deg, rgba(255, 255, 255, .22), rgba(255, 255, 255, .06) 30%, rgba(255, 255, 255, .03) 70%, rgba(255, 255, 255, .08));
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
   mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
@@ -158,9 +119,9 @@ h1, h2, h3, p, dl, dd, figure { margin: 0; }
   inset: 0;
   z-index: -1;
   border-radius: inherit;
-  background: radial-gradient(420px circle at var(--mx, 50%) var(--my, -40%), rgba(143, 208, 245, .1), transparent 60%);
+  background: radial-gradient(420px circle at var(--mx, 50%) var(--my, -40%), rgba(255, 255, 255, .05), transparent 60%);
   opacity: 0;
-  transition: opacity .4s ease;
+  transition: opacity .25s ease;
   pointer-events: none;
 }
 .glass:hover::before { opacity: 1; }
@@ -169,7 +130,7 @@ h1, h2, h3, p, dl, dd, figure { margin: 0; }
 .mark {
   position: relative;
   display: block;
-  filter: drop-shadow(0 0 10px rgba(55, 150, 208, .4));
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, .6)) drop-shadow(0 0 8px rgba(55, 150, 208, .25));
 }
 .mark img { width: 100%; height: 100%; object-fit: contain; }
 .mark::before,
@@ -187,11 +148,13 @@ h1, h2, h3, p, dl, dd, figure { margin: 0; }
 .mark::after {
   background: linear-gradient(115deg, transparent 40%, rgba(255, 255, 255, .85) 50%, transparent 60%) no-repeat;
   background-size: 260% 100%;
-  animation: shine 6s ease-in-out infinite;
+  background-position: 160% 0;
 }
+a:hover .mark::after,
+.mark:hover::after { animation: shine .9s ease-out; }
 @keyframes shine {
-  0%, 60%   { background-position: 160% 0; }
-  90%, 100% { background-position: -60% 0; }
+  from { background-position: 160% 0; }
+  to   { background-position: -60% 0; }
 }
 
 /* ── Top bar (inner pages) ────────────────────────────────────── */
@@ -236,7 +199,10 @@ h1, h2, h3, p, dl, dd, figure { margin: 0; }
   font-size: var(--fs-sm);
   color: var(--ink-dim);
   text-decoration: none;
-  padding: 7px 13px;
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 14px;
   border-radius: 999px;
   white-space: nowrap;
   transition: color .2s ease, background-color .2s ease;
@@ -248,6 +214,8 @@ h1, h2, h3, p, dl, dd, figure { margin: 0; }
   .topbar-inner { border-radius: 22px; flex-wrap: wrap; padding: 10px 12px; row-gap: 6px; }
   .nav { margin-left: 0; width: 100%; }
 }
+
+@media (pointer: coarse) { .nav a { min-height: 44px; } }
 
 /* ── Page column ──────────────────────────────────────────────── */
 .page {
@@ -289,18 +257,12 @@ h1, h2, h3, p, dl, dd, figure { margin: 0; }
   text-wrap: pretty;
 }
 
-/* Slow liquid shimmer for display titles */
+/* Display titles: solid, with a faint cool fade on the last letters */
 .shimmer {
-  background: linear-gradient(100deg, var(--ink) 0%, var(--ink) 30%, var(--accent-hi) 45%, var(--accent) 55%, var(--ink) 70%, var(--ink) 100%);
-  background-size: 250% 100%;
+  background: linear-gradient(100deg, var(--ink) 55%, #cfe6f7 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  animation: shimmer 14s ease-in-out infinite;
-}
-@keyframes shimmer {
-  0%, 100% { background-position: 100% 0; }
-  50%      { background-position: 0% 0; }
 }
 
 .prose { display: flex; flex-direction: column; gap: 1.1em; color: var(--ink-dim); max-width: 65ch; }
@@ -318,9 +280,9 @@ h1, h2, h3, p, dl, dd, figure { margin: 0; }
   color: var(--ink);
   text-decoration: none;
   cursor: pointer;
-  transition: translate .25s var(--ease), box-shadow .25s ease;
+  transition: background-color .2s ease, box-shadow .2s ease;
 }
-.btn:hover { translate: 0 -1px; box-shadow: inset 0 1px 0 rgba(255, 255, 255, .1), 0 0 0 1px rgba(143, 208, 245, .25), 0 12px 30px -10px rgba(55, 150, 208, .45); }
+.btn:hover { background-color: rgba(143, 208, 245, .08); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .12), 0 0 0 1px rgba(143, 208, 245, .3), 0 6px 16px -6px rgba(0, 0, 0, .6); }
 .btn svg { width: 16px; height: 16px; flex-shrink: 0; }
 
 .link {
@@ -342,13 +304,14 @@ a:hover .arrow { translate: 2px -2px; }
   overflow: hidden;
   background: var(--bg-raise);
   box-shadow:
-    0 0 0 1px var(--line-strong),
+    0 0 0 1px rgba(255, 255, 255, .08),
+    0 2px 4px rgba(0, 0, 0, .4),
+    0 12px 28px -8px rgba(0, 0, 0, .55),
     0 40px 80px -40px rgba(0, 0, 0, .9);
-  transition: box-shadow .4s ease;
+  transition: box-shadow .25s ease;
 }
-.frame img { width: 100%; height: 100%; object-fit: cover; transition: scale .8s var(--ease); }
-.frame:hover { box-shadow: 0 0 0 1px rgba(143, 208, 245, .45), 0 40px 80px -40px rgba(0, 0, 0, .9), 0 0 40px -10px rgba(55, 150, 208, .35); }
-.frame:hover img { scale: 1.015; }
+.frame img { width: 100%; height: 100%; object-fit: cover; }
+.frame:hover { box-shadow: 0 0 0 1px rgba(143, 208, 245, .35), 0 2px 4px rgba(0, 0, 0, .4), 0 16px 36px -8px rgba(0, 0, 0, .6), 0 40px 80px -40px rgba(0, 0, 0, .9); }
 .frame--wide { aspect-ratio: 697 / 335; }
 
 /* ── Timeline (experience, extracurricular) ───────────────────── */
@@ -378,7 +341,7 @@ a:hover .arrow { translate: 2px -2px; }
   height: 11px;
   border-radius: 50%;
   background: var(--bg);
-  box-shadow: 0 0 0 1.5px var(--accent), 0 0 14px rgba(55, 150, 208, .6);
+  box-shadow: 0 0 0 1.5px var(--accent), 0 0 6px rgba(55, 150, 208, .45);
 }
 .timeline > article:first-child::before { background: var(--accent-hi); }
 @media (max-width: 520px) {
@@ -436,9 +399,9 @@ a:hover .arrow { translate: 2px -2px; }
   place-items: center;
   background: radial-gradient(circle at 30% 20%, rgba(143, 208, 245, .14), rgba(55, 150, 208, .04) 70%);
   box-shadow: inset 0 0 0 1px var(--line-strong), inset 0 1px 0 rgba(255, 255, 255, .1);
-  transition: box-shadow .25s ease, translate .25s var(--ease);
+  transition: box-shadow .2s ease;
 }
-.flow-icon:hover { translate: 0 -2px; box-shadow: inset 0 0 0 1px rgba(143, 208, 245, .5), 0 0 24px rgba(55, 150, 208, .35); }
+.flow-icon:hover { box-shadow: inset 0 0 0 1px rgba(143, 208, 245, .5), 0 4px 12px rgba(0, 0, 0, .4); }
 .flow-icon img { width: 28px; height: 28px; object-fit: contain; }
 .flow-name {
   grid-row: 2;
@@ -571,7 +534,6 @@ a:hover .arrow { translate: 2px -2px; }
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
   mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
-  animation: spin 18s linear infinite;
 }
 .orb::after {
   content: "";
@@ -585,7 +547,6 @@ a:hover .arrow { translate: 2px -2px; }
   rotate: -32deg;
 }
 .orb img { width: 60%; height: 60%; object-fit: contain; }
-@keyframes spin { to { rotate: 360deg; } }
 
 /* ── Gallery ──────────────────────────────────────────────────── */
 .gallery { columns: 2 280px; column-gap: 18px; }
@@ -643,9 +604,9 @@ a:hover .arrow { translate: 2px -2px; }
   align-items: center;
   gap: 14px;
   text-decoration: none;
-  transition: translate .25s var(--ease);
+  transition: background-color .2s ease;
 }
-.channel:hover { translate: 0 -2px; }
+.channel:hover { background-color: rgba(143, 208, 245, .05); }
 .channel svg { width: 22px; height: 22px; fill: var(--accent-hi); flex-shrink: 0; }
 .channel-text { display: flex; flex-direction: column; line-height: 1.35; min-width: 0; }
 .channel-name { font-weight: 500; }
@@ -807,7 +768,7 @@ a:hover .arrow { translate: 2px -2px; }
   pointer-events: none;
 }
 
-.js-reveal .reveal { opacity: 0; translate: 0 18px; transition: opacity .9s var(--ease) var(--d, 0s), translate .9s var(--ease) var(--d, 0s); }
+.js-reveal .reveal { opacity: 0; translate: 0 10px; transition: opacity .55s ease-out var(--d, 0s), translate .55s ease-out var(--d, 0s); }
 .js-reveal .reveal.in { opacity: 1; translate: 0 0; }
 
 @keyframes page-in { from { opacity: 0; } to { opacity: 1; } }
