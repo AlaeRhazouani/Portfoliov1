@@ -5,6 +5,13 @@
    navigation and data panels; type does the rest.
    ───────────────────────────────────────────────────────────────── */
 
+/* Title face. Covers A–Z and a–z only; anything else falls back to Unbounded. */
+@font-face {
+  font-family: 'Gecko Lunch';
+  src: url(../assets/fonts/gecko-lunch.ttf) format('truetype');
+  font-display: swap;
+}
+
 :root {
   /* Colour */
   --bg:          #03060c;
@@ -826,4 +833,11 @@ body { animation: page-in .5s ease both; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
   .js-reveal .reveal { opacity: 1; translate: none; }
+}
+
+/* ── Title face ───────────────────────────────────────────────── */
+:is(.hero-name, .page-head h1, .next-title) {
+  font-family: 'Gecko Lunch', var(--display);
+  font-weight: normal;
+  letter-spacing: 0;
 }
