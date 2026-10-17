@@ -836,8 +836,10 @@ body { animation: page-in .5s ease both; }
 }
 
 /* ── Title face ───────────────────────────────────────────────── */
-:is(.hero-name, .page-head h1, .next-title) {
+:is(.hero-name, .page-head h1, .next-title, .brand-name, .toc-label) {
   font-family: 'Gecko Lunch', var(--display);
   font-weight: normal;
   letter-spacing: 0;
 }
+.brand-name { font-size: 17px; }
+.toc-label { font-size: 19px; }
