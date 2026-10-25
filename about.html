@@ -51,48 +51,74 @@
     </div>
   </section>
 
-  <!-- An agent places one block per theme as you scroll. Without script the blocks simply show. -->
-  <section class="build" aria-label="What I work on">
-    <div class="agent" aria-hidden="true">
-      <div class="orb agent-core"><span class="agent-spark"></span><canvas></canvas></div>
-      <p class="agent-status">Ready to build</p>
+  <!-- The story as a CI/CD run: each stage passes as you reach it. Without script every stage shows as passed. -->
+  <section class="pipeline" aria-label="What I work on, as a pipeline">
+    <div class="pipe-bar glass">
+      <code class="pipe-file">alae.yml</code>
+      <nav class="pipe-dots" aria-label="Stages">
+        <a href="#stage-train" data-state="passed" aria-label="AI that ships"><span></span></a>
+        <a href="#stage-deploy" data-state="passed" aria-label="DevOps, done right"><span></span></a>
+        <a href="#stage-test" data-state="passed" aria-label="Tested in the field"><span></span></a>
+        <a href="#stage-lead" data-state="passed" aria-label="Leading people"><span></span></a>
+        <a href="#stage-release" data-state="passed" aria-label="What's next"><span></span></a>
+      </nav>
+      <p class="pipe-status" aria-live="polite">All 5 stages passed</p>
     </div>
-    <svg class="beam" aria-hidden="true"><path pathLength="1" /></svg>
 
-    <ol class="blocks">
-      <li>
-        <article class="block glass">
-          <h2>AI that ships</h2>
+    <ol class="stages">
+      <li class="stage" id="stage-train" data-state="passed">
+        <span class="stage-dot" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m6 12.5 4 4 8-9"/></svg></span>
+        <article class="stage-card glass">
+          <div class="stage-head">
+            <h2>AI that ships</h2>
+            <p class="stage-job"><span>train</span> · <span class="stage-state">passed</span></p>
+          </div>
           <p>I like models that leave the notebook. I trained a CNN that reads emotions in real time, a YOLOv8 pipeline that reads meter digits from a single photo, and a Bayesian model that forecasts a desalination plant's weekly cost.</p>
-          <p class="block-tags">CNNs · YOLOv8 · PyMC · RAG with Ollama</p>
+          <p class="stage-tags">CNNs · YOLOv8 · PyMC · RAG with Ollama</p>
         </article>
       </li>
-      <li>
-        <article class="block glass">
-          <h2>DevOps, done right</h2>
+      <li class="stage" id="stage-deploy" data-state="passed">
+        <span class="stage-dot" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m6 12.5 4 4 8-9"/></svg></span>
+        <article class="stage-card glass">
+          <div class="stage-head">
+            <h2>DevOps, done right</h2>
+            <p class="stage-job"><span>deploy</span> · <span class="stage-state">passed</span></p>
+          </div>
           <p>If it can be automated, I'll automate it. My pipelines build, test, push and deploy on their own, roll back when something breaks, and come with dashboards that say how things are running.</p>
-          <p class="block-tags">Jenkins · GitHub Actions · Docker · Oracle Cloud · Prometheus</p>
+          <p class="stage-tags">Jenkins · GitHub Actions · Docker · Oracle Cloud · Prometheus</p>
         </article>
       </li>
-      <li>
-        <article class="block glass">
-          <h2>Tested in the field</h2>
+      <li class="stage" id="stage-test" data-state="passed">
+        <span class="stage-dot" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m6 12.5 4 4 8-9"/></svg></span>
+        <article class="stage-card glass">
+          <div class="stage-head">
+            <h2>Tested in the field</h2>
+            <p class="stage-job"><span>test</span> · <span class="stage-state">passed</span></p>
+          </div>
           <p>At the Agence Urbaine de Fès, my app cut file searches from 15–45 minutes to under a second. At OCP Phosboucraa, I forecast next week's desalination costs. At CGI Maroc, I built an on-premise RAG system that scores developer skills.</p>
-          <p class="block-tags">3 real environments, 2025–2026</p>
+          <p class="stage-tags">3 real environments, 2025–2026</p>
         </article>
       </li>
-      <li>
-        <article class="block glass">
-          <h2>Leading people</h2>
+      <li class="stage" id="stage-lead" data-state="passed">
+        <span class="stage-dot" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m6 12.5 4 4 8-9"/></svg></span>
+        <article class="stage-card glass">
+          <div class="stage-head">
+            <h2>Leading people</h2>
+            <p class="stage-job"><span>lead</span> · <span class="stage-state">passed</span></p>
+          </div>
           <p>I led ADEAM, ENSAM Meknès's student association: a board of 10, 22 clubs and a 200,000 MAD budget. I also co-organized the first astronomy festival in the Meknès region. Shipping an event and shipping software both take ownership and a solid plan B.</p>
-          <p class="block-tags">President of ADEAM and the Space Club, 2024–2025</p>
+          <p class="stage-tags">President of ADEAM and the Space Club, 2024–2025</p>
         </article>
       </li>
-      <li>
-        <article class="block glass">
-          <h2>What's next</h2>
+      <li class="stage" id="stage-release" data-state="passed">
+        <span class="stage-dot" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m6 12.5 4 4 8-9"/></svg></span>
+        <article class="stage-card glass">
+          <div class="stage-head">
+            <h2>What's next</h2>
+            <p class="stage-job"><span>release</span> · <span class="stage-state">passed</span></p>
+          </div>
           <p>I want to work where DevOps meets AI: the platforms that train, ship and watch models in production. If your team builds that, let's talk.</p>
-          <div class="block-actions">
+          <div class="stage-actions">
             <a class="btn glass" href="assets/CV_Alae.pdf" download="CV_Alae_Rhazouani.pdf">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0-4.5-4.5M12 15l4.5-4.5M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
               Download résumé (PDF)

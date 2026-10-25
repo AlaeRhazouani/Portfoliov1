@@ -810,75 +810,107 @@ a:hover .arrow { translate: 2px -2px; }
   .portrait { width: min(260px, 70%); }
 }
 
-/* ── About: an agent places the blocks ────────────────────────────
-   The 3D core (site.js, Three.js) sits in a glass orb that stays in
-   view; a beam links it to the block being read. Without script or
-   WebGL the orb keeps a soft spark and the blocks simply show. */
-.build {
-  position: relative;
-  display: grid;
-  grid-template-columns: 200px minmax(0, 1fr);
-  gap: clamp(28px, 4vw, 48px);
-  align-items: start;
-}
-.agent {
+/* ── About: the story as a pipeline run ───────────────────────────
+   Readable stage cards on a vertical track. site.js runs each stage
+   as it scrolls into view; without script every stage shows passed. */
+.pipeline { display: flex; flex-direction: column; gap: 28px; }
+.pipe-bar {
   position: sticky;
-  top: calc(50vh - 120px);
-  z-index: 1;
+  top: 92px;
+  z-index: 5;
+  border-radius: 18px;
+  padding: 10px 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px 18px;
+  flex-wrap: wrap;
+}
+.pipe-file { font: 500 15px / 1.3 var(--mono); }
+.pipe-dots { display: flex; }
+.pipe-dots a { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; }
+.pipe-dots span { width: 10px; height: 10px; border-radius: 50%; box-shadow: inset 0 0 0 1.5px var(--line-strong); transition: background-color .3s ease, box-shadow .3s ease, scale .3s var(--ease); }
+.pipe-dots a:hover span { scale: 1.3; }
+.pipe-dots [data-state="running"] span { box-shadow: inset 0 0 0 1.5px var(--accent-hi); animation: blink .8s ease-in-out infinite alternate; }
+.pipe-dots [data-state="passed"] span { background: var(--accent); box-shadow: inset 0 0 0 1.5px var(--accent-hi); }
+@keyframes blink { to { background: rgba(143, 208, 245, .5); } }
+.pipe-status { margin-left: auto; font-size: var(--fs-sm); color: var(--ink-dim); }
+
+.stages {
+  position: relative;
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 46px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 16px;
+  gap: 32px;
 }
-.agent-core { width: 200px; }
-.agent-core canvas { position: absolute; inset: 0; width: 100%; height: 100%; border-radius: 50%; }
-.agent-spark {
-  width: 22%;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: radial-gradient(circle, #e8f6ff, rgba(143, 208, 245, .45) 40%, transparent 70%);
-}
-.agent-core.live .agent-spark { display: none; }
-.agent-status { font-size: var(--fs-sm); line-height: 1.45; color: var(--ink-dim); text-align: center; min-height: 2.9em; }
-
-.beam { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
-.beam path { fill: none; stroke: var(--accent); stroke-width: 1.5; stroke-linecap: round; opacity: .85; stroke-dasharray: 1; }
-.beam path.fresh { animation: beam-in .8s var(--ease) both; }
-@keyframes beam-in { from { stroke-dashoffset: 1; } }
-
-.blocks { position: relative; list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 40px; perspective: 1200px; }
-.blocks > li { position: relative; }
-/* The link between one block and the next */
-.blocks > li + li::before {
+/* The track, and its fill down to the stage that last ran */
+.stages::before,
+.stages::after {
   content: "";
   position: absolute;
-  left: 34px;
-  top: -40px;
+  left: 13px;
+  top: 30px;
+  bottom: var(--end, 30px);
   width: 2px;
-  height: 40px;
-  background: var(--accent);
-  opacity: .5;
-  transform-origin: 50% 0;
-  transition: transform .5s var(--ease) .35s;
+  background: var(--line-strong);
 }
-.block { border-radius: 20px; padding: clamp(22px, 3vw, 30px); display: flex; flex-direction: column; gap: 12px; }
-.block h2 { font-size: var(--fs-h2); font-weight: 600; line-height: 1.3; }
-.block p { color: var(--ink); }
-.block .block-tags { font-size: var(--fs-sm); color: var(--accent-hi); }
-.block-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 22px; margin-top: 8px; }
+.stages::after {
+  background: var(--accent);
+  transform-origin: 50% 0;
+  transform: scaleY(var(--p, 1));
+  transition: transform .6s var(--ease);
+}
+.stage { position: relative; scroll-margin-top: 170px; }
+.stage-dot {
+  position: absolute;
+  z-index: 1;
+  left: -46px;
+  top: 26px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--bg);
+  box-shadow: inset 0 0 0 1.5px var(--line-strong);
+  transition: background-color .3s ease, box-shadow .3s ease;
+}
+.stage-dot svg { width: 16px; height: 16px; fill: none; stroke: #fff; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; opacity: 0; scale: .6; transition: opacity .25s ease, scale .35s var(--ease); }
+.stage[data-state="passed"] .stage-dot { background: var(--accent); box-shadow: inset 0 0 0 1.5px var(--accent-hi), 0 0 10px rgba(55, 150, 208, .4); }
+.stage[data-state="passed"] .stage-dot svg { opacity: 1; scale: 1; }
+/* Spinner arc while a stage runs */
+.stage[data-state="running"] .stage-dot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  border-top-color: var(--accent-hi);
+  animation: spin .8s linear infinite;
+}
+@keyframes spin { to { rotate: 1turn; } }
 
-/* Placing: each block swings in from the agent's side, then links up */
-.js-build .blocks > li { opacity: 0; transform: translate3d(-32px, 18px, 0) rotateY(12deg); transition: opacity .6s ease, transform .9s var(--ease); }
-.js-build .blocks > li + li::before { transform: scaleY(0); }
-.js-build .blocks > li.placed { opacity: 1; transform: none; }
-.js-build .blocks > li.placed::before { transform: none; }
+.stage-card { border-radius: 20px; padding: clamp(22px, 3vw, 30px); display: flex; flex-direction: column; gap: 12px; }
+.stage-head { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 4px 16px; }
+.stage-head h2 { font-size: var(--fs-h2); font-weight: 600; line-height: 1.3; }
+.stage-job { font: 13px / 1.4 var(--mono); color: var(--ink-faint); }
+.stage-job span:first-child { color: var(--accent-hi); }
+.stage[data-state="running"] .stage-state { color: var(--accent-hi); }
+.stage-card p:not([class]) { color: var(--ink); }
+.stage-tags { font-size: var(--fs-sm); color: var(--accent-hi); }
+.stage-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 22px; margin-top: 8px; }
+
+/* Queued stages wait a little dimmer and lower, then rise as they run */
+.pipe-js .stage-card { transition: opacity .6s ease, translate .7s var(--ease); }
+.pipe-js .stage[data-state="queued"] .stage-card { opacity: .35; translate: 0 16px; }
 
 @media (max-width: 760px) {
-  .build { grid-template-columns: 1fr; }
-  .agent { position: static; flex-direction: row; gap: 18px; }
-  .agent-core { width: 110px; flex-shrink: 0; }
-  .agent-status { text-align: left; min-height: 0; }
-  .beam { display: none; }
+  .pipe-bar { position: static; }
+  .stages { padding-left: 36px; gap: 24px; }
+  .stages::before, .stages::after { left: 10px; }
+  .stage-dot { left: -36px; width: 22px; height: 22px; top: 24px; }
+  .stage-dot svg { width: 13px; height: 13px; }
 }
 
 /* ── Motion: progress, reveal, page transitions ───────────────── */
