@@ -447,88 +447,156 @@
     });
   }
 
-  // ── About: run the pipeline when it comes into view ──────────
-  var pipe = document.querySelector('.pipeline');
-  if (pipe) {
-    var stages = [].slice.call(pipe.querySelectorAll('.stage'));
-    var runBtn = pipe.querySelector('.pipe-run');
-    var runLabel = runBtn.querySelector('span');
-    var status = pipe.querySelector('.pipe-status');
-    var follow = true, timer;
-    var total = stages.length;
+  // ── About: the agent places one block per theme ──────────────
+  var build = document.querySelector('.build');
+  if (build) {
+    var core = build.querySelector('.agent-core');
+    var agentStatus = build.querySelector('.agent-status');
+    var items = [].slice.call(build.querySelectorAll('.blocks > li'));
+    var beam = build.querySelector('.beam path');
+    var pulse = 0, queue = [], busy = false, beamTarget = null;
+    build.classList.add('js-build');
 
-    function setState(s, state) {
-      s.setAttribute('data-state', state);
-      s.querySelector('.stage-node').disabled = state === 'queued';
+    // Blocks entering together are placed one after another
+    function placeNext() {
+      var li = queue.shift();
+      if (!li) { busy = false; return; }
+      busy = true;
+      li.classList.add('placed');
+      pulse = 1;
+      var left = items.filter(function (x) { return !x.classList.contains('placed'); }).length;
+      agentStatus.textContent = left ? 'Placing “' + li.querySelector('h2').textContent + '”' : 'All blocks linked';
+      setTimeout(placeNext, reduce ? 0 : 350);
     }
-    function open(i) {
-      stages.forEach(function (s, k) {
-        s.classList.toggle('open', k === i);
-        s.querySelector('.stage-node').setAttribute('aria-expanded', k === i ? 'true' : 'false');
-      });
+    function enqueue(li) {
+      if (li.classList.contains('placed') || queue.indexOf(li) > -1) return;
+      queue.push(li);
+      if (!busy) placeNext();
     }
-    function done() {
-      pipe.style.setProperty('--p', 1);
-      status.textContent = 'Run #22 · passed · ' + total + ' of ' + total + ' stages';
-      runBtn.disabled = false;
-      runLabel.textContent = 'Run again';
-    }
-    function step(i) {
-      if (i === total) return done();
-      var s = stages[i], log = s.querySelector('.log');
-      setState(s, 'running');
-      log.classList.add('typing');
-      if (follow) open(i);
-      pipe.style.setProperty('--p', i / (total - 1));
-      status.textContent = 'Run #22 · ' + s.querySelector('.stage-name').textContent + ' · ' + (i + 1) + ' of ' + total;
-      timer = setTimeout(function () {
-        setState(s, 'passed');
-        step(i + 1);
-      }, log.querySelectorAll('code > span').length * 140 + 450);
-    }
-    function run() {
-      clearTimeout(timer);
-      follow = true;
-      stages.forEach(function (s) {
-        setState(s, 'queued');
-        s.querySelector('.log').classList.remove('typing');
-      });
-      if (reduce) {
-        stages.forEach(function (s) { setState(s, 'passed'); s.querySelector('.log').classList.add('typing'); });
-        open(0);
-        return done();
-      }
-      runBtn.disabled = true;
-      runLabel.textContent = 'Running…';
-      void pipe.offsetWidth;   // restart the line animations on a rerun
-      step(0);
-    }
-
-    stages.forEach(function (s, k) {
-      s.querySelectorAll('code > span').forEach(function (line, n) { line.style.setProperty('--i', n); });
-      s.querySelector('.stage-node').addEventListener('click', function () {
-        follow = false;
-        open(k);
-      });
-    });
-    runBtn.addEventListener('click', run);
-    pipe.classList.add('pipe-js');
-    runBtn.hidden = false;
-
-    // Queued until seen, then it runs once by itself
-    stages.forEach(function (s) { setState(s, 'queued'); });
-    open(-1);
-    status.textContent = 'Run #22 · queued';
-    if ('IntersectionObserver' in window) {
-      var pio = new IntersectionObserver(function (entries) {
-        if (!entries[0].isIntersecting) return;
-        pio.disconnect();
-        setTimeout(run, 400);
-      }, { threshold: 0.35 });
-      pio.observe(pipe);
+    if (reduce || !('IntersectionObserver' in window)) {
+      items.forEach(enqueue);
     } else {
-      run();
+      var bio = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) { enqueue(e.target); bio.unobserve(e.target); }
+        });
+      }, { rootMargin: '0px 0px -30% 0px' });
+      items.forEach(function (li) { bio.observe(li); });
     }
+
+    // Beam from the orb to the placed block nearest the middle of the screen
+    function drawBeam() {
+      var mid = window.innerHeight / 2, best = null, bestD = Infinity;
+      items.forEach(function (li) {
+        if (!li.classList.contains('placed')) return;
+        var r = li.getBoundingClientRect(), d = Math.abs(r.top + r.height / 2 - mid);
+        if (d < bestD) { bestD = d; best = li; }
+      });
+      if (!best) return beam.setAttribute('d', '');
+      var s = build.getBoundingClientRect(), c = core.getBoundingClientRect(), b = best.getBoundingClientRect();
+      var ax = c.right - s.left - 6, ay = c.top + c.height / 2 - s.top;
+      var bx = b.left - s.left, by = b.top + Math.min(44, b.height / 2) - s.top, mx = (ax + bx) / 2;
+      beam.setAttribute('d', 'M' + ax + ' ' + ay + 'C' + mx + ' ' + ay + ' ' + mx + ' ' + by + ' ' + bx + ' ' + by);
+      if (best !== beamTarget) {
+        beamTarget = best;
+        beam.classList.remove('fresh');
+        void beam.getBoundingClientRect();
+        beam.classList.add('fresh');
+      }
+    }
+    var beamQueued = false;
+    function queueBeam() {
+      if (beamQueued) return;
+      beamQueued = true;
+      requestAnimationFrame(function () { beamQueued = false; drawBeam(); });
+    }
+    window.addEventListener('scroll', queueBeam, { passive: true });
+    window.addEventListener('resize', queueBeam);
+    items.forEach(function (li) { li.addEventListener('transitionend', queueBeam); });
+
+    // The 3D core: a glass crystal with a bright kernel and an orbit
+    // carrying three small blocks. Loaded only here; on failure the
+    // CSS orb and its spark stay.
+    var canvas = core.querySelector('canvas');
+    import('https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.min.js').then(function (THREE) {
+      var renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      var scene = new THREE.Scene();
+      var camera = new THREE.PerspectiveCamera(35, 1, 0.1, 50);
+      camera.position.z = 6.6;
+
+      var rig = new THREE.Group();
+      scene.add(rig);
+      var geo = new THREE.IcosahedronGeometry(1, 0);
+      rig.add(new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ color: 0x3796d0, metalness: 0.2, roughness: 0.3, flatShading: true, transparent: true, opacity: 0.42 })));
+      rig.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo), new THREE.LineBasicMaterial({ color: 0x8fd0f5, transparent: true, opacity: 0.75 })));
+      var kernel = new THREE.Mesh(new THREE.IcosahedronGeometry(0.3, 1), new THREE.MeshBasicMaterial({ color: 0xd8f0ff }));
+      rig.add(kernel);
+
+      var orbit = new THREE.Group();
+      orbit.rotation.set(1.15, 0, 0.4);
+      scene.add(orbit);
+      orbit.add(new THREE.Mesh(new THREE.TorusGeometry(1.7, 0.008, 6, 160), new THREE.MeshBasicMaterial({ color: 0x8fd0f5, transparent: true, opacity: 0.35 })));
+      var cubes = [0, 1, 2].map(function () {
+        var c = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.2, 0.2), new THREE.MeshStandardMaterial({ color: 0x8fd0f5, metalness: 0.3, roughness: 0.35 }));
+        orbit.add(c);
+        return c;
+      });
+
+      scene.add(new THREE.AmbientLight(0x6688aa, 0.8));
+      var key = new THREE.DirectionalLight(0xffffff, 2.2);
+      key.position.set(3, 4, 5);
+      scene.add(key);
+      var rim = new THREE.DirectionalLight(0x3796d0, 1.6);
+      rim.position.set(-4, -2, 1);
+      scene.add(rim);
+
+      var tiltX = 0, tiltY = 0, seen = true, looping = false, last = performance.now(), t = 0, spin = 0;
+      function fit() {
+        var s = core.clientWidth;
+        if (s) renderer.setSize(s, s, false);
+      }
+      function frame(now) {
+        var dt = Math.min((now - last) / 1000, 0.05);
+        last = now;
+        t += dt;
+        pulse *= 0.95;
+        spin += dt * (0.5 + pulse * 2.5);   // the orbit speeds up while placing
+        rig.rotation.y = t * 0.25 + tiltX * 0.5;
+        rig.rotation.x = Math.sin(t * 0.3) * 0.15 + tiltY * 0.35;
+        cubes.forEach(function (c, k) {
+          var a = spin + k * 2.094;
+          c.position.set(Math.cos(a) * 1.7, Math.sin(a) * 1.7, 0);
+          c.rotation.set(t * 0.7 + k, t * 0.5, 0);
+        });
+        kernel.scale.setScalar(1 + pulse * 0.5 + Math.sin(t * 2) * 0.04);
+        renderer.render(scene, camera);
+        looping = seen && !reduce;
+        if (looping) requestAnimationFrame(frame);
+      }
+      function start() {
+        if (looping) return;
+        last = performance.now();
+        requestAnimationFrame(frame);
+      }
+
+      fit();
+      core.classList.add('live');
+      start();
+      if ('ResizeObserver' in window) new ResizeObserver(function () { fit(); if (reduce) start(); }).observe(core);
+      if ('IntersectionObserver' in window) {
+        new IntersectionObserver(function (e) {
+          seen = e[0].isIntersecting;
+          if (seen) start();
+        }).observe(core);
+      }
+      if (finePointer && !reduce) {
+        window.addEventListener('pointermove', function (e) {
+          tiltX = e.clientX / window.innerWidth - 0.5;
+          tiltY = e.clientY / window.innerHeight - 0.5;
+        }, { passive: true });
+      }
+    }).catch(function () {});
   }
 
   // ── Copy email ───────────────────────────────────────────────

@@ -810,135 +810,75 @@ a:hover .arrow { translate: 2px -2px; }
   .portrait { width: min(260px, 70%); }
 }
 
-/* ── About: the story as a pipeline run ───────────────────────────
-   Without script: every stage passed, every log open in a list.
-   With script (.pipe-js): six nodes on a track, one shared log cell. */
-.pipeline {
-  border-radius: 22px;
-  padding: clamp(20px, 3vw, 32px);
-  display: flex;
-  flex-direction: column;
-  gap: 26px;
-}
-.pipe-head { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px 20px; }
-.pipe-title { font: 500 18px / 1.3 var(--mono); color: var(--ink); }
-.pipe-status { margin-top: 4px; }
-.pipe-run:disabled { cursor: progress; opacity: .7; }
-
-.stages { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 22px; }
-.stage-node {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 0;
-  border: 0;
-  background: none;
-  font: inherit;
-  color: inherit;
-  text-align: left;
-  cursor: default;
-}
-.stage-dot {
-  position: relative;
-  flex-shrink: 0;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  background: var(--bg);
-  box-shadow: inset 0 0 0 1.5px var(--line-strong);
-  transition: background-color .3s ease, box-shadow .3s ease;
-}
-.stage-dot svg { width: 16px; height: 16px; fill: none; stroke: #fff; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; opacity: 0; scale: .6; transition: opacity .25s ease, scale .35s var(--ease); }
-.stage[data-state="passed"] .stage-dot { background: var(--accent); box-shadow: inset 0 0 0 1.5px var(--accent-hi), 0 0 10px rgba(55, 150, 208, .4); }
-.stage[data-state="passed"] .stage-dot svg { opacity: 1; scale: 1; }
-/* Spinner arc while a stage runs */
-.stage[data-state="running"] .stage-dot::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  border: 2px solid transparent;
-  border-top-color: var(--accent-hi);
-  animation: spin .8s linear infinite;
-}
-@keyframes spin { to { rotate: 1turn; } }
-.stage-name { font-size: 15px; font-weight: 600; line-height: 1.2; transition: color .2s ease; }
-.stage-sub { font-size: 13px; color: var(--ink-faint); }
-
-.log {
-  margin-top: 12px;
-  border-radius: 14px;
-  padding: 16px 18px;
-  background: rgba(3, 6, 12, .55);
-  box-shadow: inset 0 0 0 1px var(--line);
-}
-.log pre { margin: 0; font: 13.5px / 1.75 var(--mono); }
-/* Grid drops the newlines between lines, so each line can move on its own */
-.log code { display: grid; }
-.log code > span { white-space: pre-wrap; color: var(--ink); padding-left: 1.6em; text-indent: -1.6em; }
-.log code > .cmd { color: var(--ink-faint); }
-.log b { font-weight: 500; color: var(--accent-hi); }
-.log-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 22px; margin-top: 18px; }
-
-/* Scripted layout */
-.pipe-js .stages {
+/* ── About: an agent places the blocks ────────────────────────────
+   The 3D core (site.js, Three.js) sits in a glass orb that stays in
+   view; a beam links it to the block being read. Without script or
+   WebGL the orb keeps a soft spark and the blocks simply show. */
+.build {
   position: relative;
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
-  gap: 0;
+  grid-template-columns: 200px minmax(0, 1fr);
+  gap: clamp(28px, 4vw, 48px);
+  align-items: start;
 }
-/* Track behind the dots, and its fill up to the running stage */
-.pipe-js .stages::before,
-.pipe-js .stages::after {
-  content: "";
-  position: absolute;
-  top: 24px;
-  left: calc(100% / 12);
-  right: calc(100% / 12);
-  height: 2px;
-  margin-top: -1px;
-  background: var(--line-strong);
-}
-.pipe-js .stages::after {
-  background: var(--accent);
-  transform-origin: 0 50%;
-  transform: scaleX(var(--p, 0));
-  transition: transform .5s var(--ease);
-}
-.pipe-js .stage { display: contents; }
-.pipe-js .stage-node {
-  position: relative;
+.agent {
+  position: sticky;
+  top: calc(50vh - 120px);
   z-index: 1;
-  grid-row: 1;
+  display: flex;
   flex-direction: column;
-  gap: 4px;
-  padding: 10px 4px 12px;
-  border-radius: 14px;
-  text-align: center;
-  cursor: pointer;
-  transition: background-color .2s ease;
+  align-items: center;
+  gap: 16px;
 }
-.pipe-js .stage-dot { margin-bottom: 6px; }
-.pipe-js .stage-node:not(:disabled):hover { background: rgba(143, 208, 245, .06); }
-.pipe-js .stage-node:disabled { cursor: default; }
-.pipe-js .stage-node:disabled .stage-name { color: var(--ink-faint); }
-.pipe-js .stage.open .stage-name { color: var(--accent-hi); }
-.pipe-js .stage.open .stage-node { background: rgba(55, 150, 208, .12); }
-/* All logs share one cell, so the panel keeps the height of the longest */
-.pipe-js .log { grid-row: 2; grid-column: 1 / -1; margin-top: 18px; visibility: hidden; }
-.pipe-js .stage.open .log { visibility: visible; }
-.pipe-js .log code > span { opacity: 0; }
-.pipe-js .log.typing code > span { opacity: 1; animation: line-in .32s var(--ease) backwards; animation-delay: calc(var(--i, 0) * 140ms); }
-@keyframes line-in { from { opacity: 0; translate: 0 6px; } }
+.agent-core { width: 200px; }
+.agent-core canvas { position: absolute; inset: 0; width: 100%; height: 100%; border-radius: 50%; }
+.agent-spark {
+  width: 22%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, #e8f6ff, rgba(143, 208, 245, .45) 40%, transparent 70%);
+}
+.agent-core.live .agent-spark { display: none; }
+.agent-status { font-size: var(--fs-sm); line-height: 1.45; color: var(--ink-dim); text-align: center; min-height: 2.9em; }
 
-@media (max-width: 620px) {
-  .pipe-js .stages { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 4px; }
-  .pipe-js .stages::before, .pipe-js .stages::after { display: none; }
-  .pipe-js .stage:nth-child(n + 4) .stage-node { grid-row: 2; }
-  .pipe-js .log { grid-row: 3; margin-top: 14px; padding: 14px; }
-  .log pre { font-size: 12.5px; }
+.beam { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.beam path { fill: none; stroke: var(--accent); stroke-width: 1.5; stroke-linecap: round; opacity: .85; stroke-dasharray: 1; }
+.beam path.fresh { animation: beam-in .8s var(--ease) both; }
+@keyframes beam-in { from { stroke-dashoffset: 1; } }
+
+.blocks { position: relative; list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 40px; perspective: 1200px; }
+.blocks > li { position: relative; }
+/* The link between one block and the next */
+.blocks > li + li::before {
+  content: "";
+  position: absolute;
+  left: 34px;
+  top: -40px;
+  width: 2px;
+  height: 40px;
+  background: var(--accent);
+  opacity: .5;
+  transform-origin: 50% 0;
+  transition: transform .5s var(--ease) .35s;
+}
+.block { border-radius: 20px; padding: clamp(22px, 3vw, 30px); display: flex; flex-direction: column; gap: 12px; }
+.block h2 { font-size: var(--fs-h2); font-weight: 600; line-height: 1.3; }
+.block p { color: var(--ink); }
+.block .block-tags { font-size: var(--fs-sm); color: var(--accent-hi); }
+.block-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 22px; margin-top: 8px; }
+
+/* Placing: each block swings in from the agent's side, then links up */
+.js-build .blocks > li { opacity: 0; transform: translate3d(-32px, 18px, 0) rotateY(12deg); transition: opacity .6s ease, transform .9s var(--ease); }
+.js-build .blocks > li + li::before { transform: scaleY(0); }
+.js-build .blocks > li.placed { opacity: 1; transform: none; }
+.js-build .blocks > li.placed::before { transform: none; }
+
+@media (max-width: 760px) {
+  .build { grid-template-columns: 1fr; }
+  .agent { position: static; flex-direction: row; gap: 18px; }
+  .agent-core { width: 110px; flex-shrink: 0; }
+  .agent-status { text-align: left; min-height: 0; }
+  .beam { display: none; }
 }
 
 /* ── Motion: progress, reveal, page transitions ───────────────── */

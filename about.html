@@ -42,7 +42,7 @@
       <img src="assets/photo.webp" alt="Portrait of Alae Rhazouani" />
     </figure>
     <div>
-      <p class="lead">Hey, I'm Alae — a 22-year-old engineering student at ENSAM Meknès. I build delivery pipelines and the AI that ships through them, so here is my story as one.</p>
+      <p class="lead">Hey, I'm Alae — a 22-year-old engineering student at ENSAM Meknès, building things at the intersection of DevOps, Cloud, and intelligent systems.</p>
       <dl class="facts">
         <div><dt class="meta">School</dt><dd>ENSAM Meknès</dd></div>
         <div><dt class="meta">Track</dt><dd>Software &amp; Information Systems Engineering</dd></div>
@@ -51,107 +51,55 @@
     </div>
   </section>
 
-  <!-- The story as a CI/CD run. Without script every stage shows as passed with its log open. -->
-  <section class="pipeline glass" aria-labelledby="pipe-title">
-    <div class="pipe-head">
-      <div>
-        <h2 id="pipe-title" class="pipe-title"><code>alae.yml</code></h2>
-        <p class="meta pipe-status" aria-live="polite">Run #22 · passed · 6 of 6 stages</p>
-      </div>
-      <button class="btn pipe-run" type="button" hidden>
-        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5Z"/></svg>
-        <span>Run again</span>
-      </button>
+  <!-- An agent places one block per theme as you scroll. Without script the blocks simply show. -->
+  <section class="build" aria-label="What I work on">
+    <div class="agent" aria-hidden="true">
+      <div class="orb agent-core"><span class="agent-spark"></span><canvas></canvas></div>
+      <p class="agent-status">Ready to build</p>
     </div>
+    <svg class="beam" aria-hidden="true"><path pathLength="1" /></svg>
 
-    <ol class="stages">
-      <li class="stage" data-state="passed">
-        <button class="stage-node" type="button" aria-controls="log-checkout">
-          <span class="stage-dot" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m6 12.5 4 4 8-9"/></svg></span>
-          <span class="stage-name">Checkout</span>
-          <span class="stage-sub">Who</span>
-        </button>
-        <div class="log" id="log-checkout">
-          <pre><code><span class="cmd">$ git clone github.com/AlaeRhazouani</span>
-<span><b>✓</b> Alae Rhazouani · 22 · Meknès, Morocco</span>
-<span><b>✓</b> ENSAM Meknès — Software &amp; Information Systems Engineering</span>
-<span><b>✓</b> Gets genuinely excited about a clean CI/CD pipeline</span>
-<span><b>✓</b> If it can be automated, I'll automate it</span></code></pre>
-        </div>
+    <ol class="blocks">
+      <li>
+        <article class="block glass">
+          <h2>AI that ships</h2>
+          <p>I like models that leave the notebook. I trained a CNN that reads emotions in real time, a YOLOv8 pipeline that reads meter digits from a single photo, and a Bayesian model that forecasts a desalination plant's weekly cost.</p>
+          <p class="block-tags">CNNs · YOLOv8 · PyMC · RAG with Ollama</p>
+        </article>
       </li>
-      <li class="stage" data-state="passed">
-        <button class="stage-node" type="button" aria-controls="log-train">
-          <span class="stage-dot" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m6 12.5 4 4 8-9"/></svg></span>
-          <span class="stage-name">Train</span>
-          <span class="stage-sub">AI</span>
-        </button>
-        <div class="log" id="log-train">
-          <pre><code><span class="cmd">$ python train.py --applied</span>
-<span><b>✓</b> CNN from scratch on FER2013 — 35,887 images, 7 emotions, Grad-CAM</span>
-<span><b>✓</b> YOLOv8 reading QR codes and meter digits — 2,001-image dataset</span>
-<span><b>✓</b> Hierarchical Bayesian cost forecast in PyMC, with Monte Carlo</span>
-<span><b>✓</b> Hybrid RAG on Mistral 7B and DeepSeek-Coder via Ollama, pgvector</span></code></pre>
-        </div>
+      <li>
+        <article class="block glass">
+          <h2>DevOps, done right</h2>
+          <p>If it can be automated, I'll automate it. My pipelines build, test, push and deploy on their own, roll back when something breaks, and come with dashboards that say how things are running.</p>
+          <p class="block-tags">Jenkins · GitHub Actions · Docker · Oracle Cloud · Prometheus</p>
+        </article>
       </li>
-      <li class="stage" data-state="passed">
-        <button class="stage-node" type="button" aria-controls="log-deploy">
-          <span class="stage-dot" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m6 12.5 4 4 8-9"/></svg></span>
-          <span class="stage-name">Deploy</span>
-          <span class="stage-sub">DevOps</span>
-        </button>
-        <div class="log" id="log-deploy">
-          <pre><code><span class="cmd">$ jenkins build student-task-manager</span>
-<span><b>✓</b> Build → pytest → push to GHCR → SSH deploy, rollback on failure</span>
-<span><b>✓</b> 3 Flask microservices in Docker Compose on Oracle Cloud</span>
-<span><b>✓</b> Prometheus + Grafana dashboards and alerts</span>
-<span><b>✓</b> GitHub Actions → Hugging Face Spaces, tracked in Weights &amp; Biases</span></code></pre>
-        </div>
+      <li>
+        <article class="block glass">
+          <h2>Tested in the field</h2>
+          <p>At the Agence Urbaine de Fès, my app cut file searches from 15–45 minutes to under a second. At OCP Phosboucraa, I forecast next week's desalination costs. At CGI Maroc, I built an on-premise RAG system that scores developer skills.</p>
+          <p class="block-tags">3 real environments, 2025–2026</p>
+        </article>
       </li>
-      <li class="stage" data-state="passed">
-        <button class="stage-node" type="button" aria-controls="log-test">
-          <span class="stage-dot" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m6 12.5 4 4 8-9"/></svg></span>
-          <span class="stage-name">Test</span>
-          <span class="stage-sub">In production</span>
-        </button>
-        <div class="log" id="log-test">
-          <pre><code><span class="cmd">$ pytest --env=production</span>
-<span><b>✓</b> Agence Urbaine de Fès, 2025 — file lookup from 15–45 min to under 1 s</span>
-<span><b>✓</b> OCP Phosboucraa, 2026 — next week's desalination cost, with its uncertainty</span>
-<span><b>✓</b> CGI Maroc, 2026 — on-premise RAG pipeline that scores developer skills</span></code></pre>
-        </div>
+      <li>
+        <article class="block glass">
+          <h2>Leading people</h2>
+          <p>I led ADEAM, ENSAM Meknès's student association: a board of 10, 22 clubs and a 200,000 MAD budget. I also co-organized the first astronomy festival in the Meknès region. Shipping an event and shipping software both take ownership and a solid plan B.</p>
+          <p class="block-tags">President of ADEAM and the Space Club, 2024–2025</p>
+        </article>
       </li>
-      <li class="stage" data-state="passed">
-        <button class="stage-node" type="button" aria-controls="log-lead">
-          <span class="stage-dot" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m6 12.5 4 4 8-9"/></svg></span>
-          <span class="stage-name">Lead</span>
-          <span class="stage-sub">Ownership</span>
-        </button>
-        <div class="log" id="log-lead">
-          <pre><code><span class="cmd">$ lead --team ADEAM --team space-club</span>
-<span><b>✓</b> President of ADEAM, 2024–25 — board of 10, 22 clubs, 200,000 MAD</span>
-<span><b>✓</b> Revived the Arts &amp; Métiers Inter-Instituts after 6 years</span>
-<span><b>✓</b> First astronomy festival in the Meknès region, from scratch</span>
-<span><b>✓</b> Events and software both ship on ownership and a solid plan B</span></code></pre>
-        </div>
-      </li>
-      <li class="stage" data-state="passed">
-        <button class="stage-node" type="button" aria-controls="log-release">
-          <span class="stage-dot" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m6 12.5 4 4 8-9"/></svg></span>
-          <span class="stage-name">Release</span>
-          <span class="stage-sub">Next</span>
-        </button>
-        <div class="log" id="log-release">
-          <pre><code><span class="cmd">$ release --channel career</span>
-<span><b>✓</b> Next version: DevOps, Cloud and AI engineering</span>
-<span><b>✓</b> Artifact ready: CV_Alae_Rhazouani.pdf</span></code></pre>
-          <div class="log-actions">
+      <li>
+        <article class="block glass">
+          <h2>What's next</h2>
+          <p>I want to work where DevOps meets AI: the platforms that train, ship and watch models in production. If your team builds that, let's talk.</p>
+          <div class="block-actions">
             <a class="btn glass" href="assets/CV_Alae.pdf" download="CV_Alae_Rhazouani.pdf">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0-4.5-4.5M12 15l4.5-4.5M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
               Download résumé (PDF)
             </a>
-            <a class="link" href="contact.html">Let's talk<span class="arrow" aria-hidden="true">→</span></a>
+            <a class="link" href="contact.html">Get in touch<span class="arrow" aria-hidden="true">→</span></a>
           </div>
-        </div>
+        </article>
       </li>
     </ol>
   </section>
