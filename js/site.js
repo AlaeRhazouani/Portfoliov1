@@ -447,6 +447,90 @@
     });
   }
 
+  // ── About: run the pipeline when it comes into view ──────────
+  var pipe = document.querySelector('.pipeline');
+  if (pipe) {
+    var stages = [].slice.call(pipe.querySelectorAll('.stage'));
+    var runBtn = pipe.querySelector('.pipe-run');
+    var runLabel = runBtn.querySelector('span');
+    var status = pipe.querySelector('.pipe-status');
+    var follow = true, timer;
+    var total = stages.length;
+
+    function setState(s, state) {
+      s.setAttribute('data-state', state);
+      s.querySelector('.stage-node').disabled = state === 'queued';
+    }
+    function open(i) {
+      stages.forEach(function (s, k) {
+        s.classList.toggle('open', k === i);
+        s.querySelector('.stage-node').setAttribute('aria-expanded', k === i ? 'true' : 'false');
+      });
+    }
+    function done() {
+      pipe.style.setProperty('--p', 1);
+      status.textContent = 'Run #22 · passed · ' + total + ' of ' + total + ' stages';
+      runBtn.disabled = false;
+      runLabel.textContent = 'Run again';
+    }
+    function step(i) {
+      if (i === total) return done();
+      var s = stages[i], log = s.querySelector('.log');
+      setState(s, 'running');
+      log.classList.add('typing');
+      if (follow) open(i);
+      pipe.style.setProperty('--p', i / (total - 1));
+      status.textContent = 'Run #22 · ' + s.querySelector('.stage-name').textContent + ' · ' + (i + 1) + ' of ' + total;
+      timer = setTimeout(function () {
+        setState(s, 'passed');
+        step(i + 1);
+      }, log.querySelectorAll('code > span').length * 140 + 450);
+    }
+    function run() {
+      clearTimeout(timer);
+      follow = true;
+      stages.forEach(function (s) {
+        setState(s, 'queued');
+        s.querySelector('.log').classList.remove('typing');
+      });
+      if (reduce) {
+        stages.forEach(function (s) { setState(s, 'passed'); s.querySelector('.log').classList.add('typing'); });
+        open(0);
+        return done();
+      }
+      runBtn.disabled = true;
+      runLabel.textContent = 'Running…';
+      void pipe.offsetWidth;   // restart the line animations on a rerun
+      step(0);
+    }
+
+    stages.forEach(function (s, k) {
+      s.querySelectorAll('code > span').forEach(function (line, n) { line.style.setProperty('--i', n); });
+      s.querySelector('.stage-node').addEventListener('click', function () {
+        follow = false;
+        open(k);
+      });
+    });
+    runBtn.addEventListener('click', run);
+    pipe.classList.add('pipe-js');
+    runBtn.hidden = false;
+
+    // Queued until seen, then it runs once by itself
+    stages.forEach(function (s) { setState(s, 'queued'); });
+    open(-1);
+    status.textContent = 'Run #22 · queued';
+    if ('IntersectionObserver' in window) {
+      var pio = new IntersectionObserver(function (entries) {
+        if (!entries[0].isIntersecting) return;
+        pio.disconnect();
+        setTimeout(run, 400);
+      }, { threshold: 0.35 });
+      pio.observe(pipe);
+    } else {
+      run();
+    }
+  }
+
   // ── Copy email ───────────────────────────────────────────────
   document.querySelectorAll('[data-copy]').forEach(function (btn) {
     var label = btn.querySelector('span');

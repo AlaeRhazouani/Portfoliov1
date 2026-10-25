@@ -42,7 +42,7 @@
       <img src="assets/photo.webp" alt="Portrait of Alae Rhazouani" />
     </figure>
     <div>
-      <p class="lead">Hey, I'm Alae — a 22-year-old engineering student at ENSAM Meknès, building things at the intersection of DevOps, Cloud, and intelligent systems.</p>
+      <p class="lead">Hey, I'm Alae — a 22-year-old engineering student at ENSAM Meknès. I build delivery pipelines and the AI that ships through them, so here is my story as one.</p>
       <dl class="facts">
         <div><dt class="meta">School</dt><dd>ENSAM Meknès</dd></div>
         <div><dt class="meta">Track</dt><dd>Software &amp; Information Systems Engineering</dd></div>
@@ -51,19 +51,110 @@
     </div>
   </section>
 
-  <div class="prose">
-    <p>I'm the kind of person who gets genuinely excited about a clean CI/CD pipeline or a well-monitored deployment dashboard.</p>
-    <p>I spend most of my time automating things that shouldn't be manual — from containerized microservices on Oracle Cloud to MLOps pipelines that ship straight to Hugging Face Spaces. <strong>Docker, Jenkins, GitHub Actions, Prometheus</strong>... these are the tools I think in. If it can be automated, I'll automate it.</p>
-    <p>Outside of code, I led the student engineering association at ENSAM and co-organized the first astronomy festival in the Meknès region from scratch — which taught me that shipping a real event and shipping real software have a lot more in common than you'd think. Both need ownership, coordination, and a solid plan B.</p>
-    <p>I'm currently looking for a 2-month PFA internship (summer 2026) where I can dive deep into a real DevOps or Cloud environment. If that sounds like a fit, let's talk.</p>
-  </div>
+  <!-- The story as a CI/CD run. Without script every stage shows as passed with its log open. -->
+  <section class="pipeline glass" aria-labelledby="pipe-title">
+    <div class="pipe-head">
+      <div>
+        <h2 id="pipe-title" class="pipe-title"><code>alae.yml</code></h2>
+        <p class="meta pipe-status" aria-live="polite">Run #22 · passed · 6 of 6 stages</p>
+      </div>
+      <button class="btn pipe-run" type="button" hidden>
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5Z"/></svg>
+        <span>Run again</span>
+      </button>
+    </div>
 
-  <div>
-    <a class="btn glass" href="assets/CV_Alae.pdf" download="CV_Alae_Rhazouani.pdf">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0-4.5-4.5M12 15l4.5-4.5M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
-      Download résumé (PDF)
-    </a>
-  </div>
+    <ol class="stages">
+      <li class="stage" data-state="passed">
+        <button class="stage-node" type="button" aria-controls="log-checkout">
+          <span class="stage-dot" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m6 12.5 4 4 8-9"/></svg></span>
+          <span class="stage-name">Checkout</span>
+          <span class="stage-sub">Who</span>
+        </button>
+        <div class="log" id="log-checkout">
+          <pre><code><span class="cmd">$ git clone github.com/AlaeRhazouani</span>
+<span><b>✓</b> Alae Rhazouani · 22 · Meknès, Morocco</span>
+<span><b>✓</b> ENSAM Meknès — Software &amp; Information Systems Engineering</span>
+<span><b>✓</b> Gets genuinely excited about a clean CI/CD pipeline</span>
+<span><b>✓</b> If it can be automated, I'll automate it</span></code></pre>
+        </div>
+      </li>
+      <li class="stage" data-state="passed">
+        <button class="stage-node" type="button" aria-controls="log-train">
+          <span class="stage-dot" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m6 12.5 4 4 8-9"/></svg></span>
+          <span class="stage-name">Train</span>
+          <span class="stage-sub">AI</span>
+        </button>
+        <div class="log" id="log-train">
+          <pre><code><span class="cmd">$ python train.py --applied</span>
+<span><b>✓</b> CNN from scratch on FER2013 — 35,887 images, 7 emotions, Grad-CAM</span>
+<span><b>✓</b> YOLOv8 reading QR codes and meter digits — 2,001-image dataset</span>
+<span><b>✓</b> Hierarchical Bayesian cost forecast in PyMC, with Monte Carlo</span>
+<span><b>✓</b> Hybrid RAG on Mistral 7B and DeepSeek-Coder via Ollama, pgvector</span></code></pre>
+        </div>
+      </li>
+      <li class="stage" data-state="passed">
+        <button class="stage-node" type="button" aria-controls="log-deploy">
+          <span class="stage-dot" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m6 12.5 4 4 8-9"/></svg></span>
+          <span class="stage-name">Deploy</span>
+          <span class="stage-sub">DevOps</span>
+        </button>
+        <div class="log" id="log-deploy">
+          <pre><code><span class="cmd">$ jenkins build student-task-manager</span>
+<span><b>✓</b> Build → pytest → push to GHCR → SSH deploy, rollback on failure</span>
+<span><b>✓</b> 3 Flask microservices in Docker Compose on Oracle Cloud</span>
+<span><b>✓</b> Prometheus + Grafana dashboards and alerts</span>
+<span><b>✓</b> GitHub Actions → Hugging Face Spaces, tracked in Weights &amp; Biases</span></code></pre>
+        </div>
+      </li>
+      <li class="stage" data-state="passed">
+        <button class="stage-node" type="button" aria-controls="log-test">
+          <span class="stage-dot" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m6 12.5 4 4 8-9"/></svg></span>
+          <span class="stage-name">Test</span>
+          <span class="stage-sub">In production</span>
+        </button>
+        <div class="log" id="log-test">
+          <pre><code><span class="cmd">$ pytest --env=production</span>
+<span><b>✓</b> Agence Urbaine de Fès, 2025 — file lookup from 15–45 min to under 1 s</span>
+<span><b>✓</b> OCP Phosboucraa, 2026 — next week's desalination cost, with its uncertainty</span>
+<span><b>✓</b> CGI Maroc, 2026 — on-premise RAG pipeline that scores developer skills</span></code></pre>
+        </div>
+      </li>
+      <li class="stage" data-state="passed">
+        <button class="stage-node" type="button" aria-controls="log-lead">
+          <span class="stage-dot" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m6 12.5 4 4 8-9"/></svg></span>
+          <span class="stage-name">Lead</span>
+          <span class="stage-sub">Ownership</span>
+        </button>
+        <div class="log" id="log-lead">
+          <pre><code><span class="cmd">$ lead --team ADEAM --team space-club</span>
+<span><b>✓</b> President of ADEAM, 2024–25 — board of 10, 22 clubs, 200,000 MAD</span>
+<span><b>✓</b> Revived the Arts &amp; Métiers Inter-Instituts after 6 years</span>
+<span><b>✓</b> First astronomy festival in the Meknès region, from scratch</span>
+<span><b>✓</b> Events and software both ship on ownership and a solid plan B</span></code></pre>
+        </div>
+      </li>
+      <li class="stage" data-state="passed">
+        <button class="stage-node" type="button" aria-controls="log-release">
+          <span class="stage-dot" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m6 12.5 4 4 8-9"/></svg></span>
+          <span class="stage-name">Release</span>
+          <span class="stage-sub">Next</span>
+        </button>
+        <div class="log" id="log-release">
+          <pre><code><span class="cmd">$ release --channel career</span>
+<span><b>✓</b> Next version: DevOps, Cloud and AI engineering</span>
+<span><b>✓</b> Artifact ready: CV_Alae_Rhazouani.pdf</span></code></pre>
+          <div class="log-actions">
+            <a class="btn glass" href="assets/CV_Alae.pdf" download="CV_Alae_Rhazouani.pdf">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0-4.5-4.5M12 15l4.5-4.5M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+              Download résumé (PDF)
+            </a>
+            <a class="link" href="contact.html">Let's talk<span class="arrow" aria-hidden="true">→</span></a>
+          </div>
+        </div>
+      </li>
+    </ol>
+  </section>
 
   <a class="next glass" href="experience.html">
     <span><span class="eyebrow">Next · II</span><span class="next-title">Experience</span></span>
