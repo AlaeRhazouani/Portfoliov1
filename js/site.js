@@ -561,21 +561,155 @@
     });
   });
 
-  // ── Cursor: a dot with a small orbit, echoing the one around the name ──
-  // The native arrow stays until the first mouse move, so nothing is
-  // ever missing after a page change. Touch never gets here.
+  // ── Cursor: a small black hole with an accretion disk ────────
+  // Particles spiral in on a tilted disk, faster near the core and
+  // brighter on the side turning toward the viewer. Outer matter lags
+  // behind the hole, so the disk smears when the mouse moves fast. The
+  // native arrow stays until the first move, and touch never gets here.
   var cursor = null, aim = function () {};
+  var cx = 0, cy = 0;
   if (finePointer && !reduce) {
     cursor = document.createElement('div');
     cursor.className = 'cursor';
     cursor.setAttribute('aria-hidden', 'true');
-    cursor.innerHTML = '<svg class="cursor-orbit" viewBox="-60 -60 120 120"><g transform="rotate(-18)"><ellipse /><circle /></g></svg>' +
-      '<i class="cursor-dot"><span class="cursor-label"></span></i>';
+    cursor.innerHTML = '<canvas></canvas><span class="cursor-label"></span>';
     document.body.appendChild(cursor);
-    var orbitEl = cursor.querySelector('svg'), ring = cursor.querySelector('ellipse'), sat = cursor.querySelector('circle');
-    var dotEl = cursor.querySelector('i'), labelEl = cursor.querySelector('span');
-    var cx = 0, cy = 0, ox = 0, oy = 0, spread = 1, spreadTo = 1, speed = 1.2, speedTo = 1.2;
-    var angle = 0, lastT = 0, inside = false, looping = false;
+    var hole = cursor.querySelector('canvas'), hctx = hole.getContext('2d');
+    var labelEl = cursor.querySelector('span');
+    var IN = 9, OUT = 38, TILT = 0.34, HALF = 16;
+    var COS = Math.cos(-0.32), SIN = Math.sin(-0.32);
+    var trail = [], waves = [], parts = [], spread = 1, spreadTo = 1, spin = 1, spinTo = 1;
+    var veil = 1, veilTo = 1, shadow = 0, shadowTo = 0, lastT = 0, inside = false, looping = false, started = false;
+
+    function spawn(p, anywhere) {
+      p.r = anywhere ? IN + Math.random() * (OUT - IN) : OUT - Math.random() * 6;
+      p.a = Math.random() * 6.283;
+      p.age = anywhere ? 1 : 0;
+      p.lane = 0.92 + Math.random() * 0.16;   // a little thickness to the disk
+      return p;
+    }
+    for (var n = 0; n < 260; n++) parts.push(spawn({}, true));
+
+    function sizeHole() {
+      var dpr = Math.min(window.devicePixelRatio || 1, 2);
+      hole.width = Math.round(window.innerWidth * dpr);
+      hole.height = Math.round(window.innerHeight * dpr);
+      hctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    sizeHole();
+    window.addEventListener('resize', sizeHole);
+
+    // Disk plane to screen: squash by the tilt, then rotate
+    function diskX(r, a) { var x = r * Math.cos(a), y = r * Math.sin(a) * TILT; return x * COS - y * SIN; }
+    function diskY(r, a) { var x = r * Math.cos(a), y = r * Math.sin(a) * TILT; return x * SIN + y * COS; }
+
+    function drawParts(back) {
+      hctx.lineCap = 'round';
+      parts.forEach(function (p) {
+        var far = Math.sin(p.a) < 0;
+        if (far !== back) return;
+        var u = (p.r - IN) / (OUT - IN), k = spread * p.lane;
+        var c = trail[Math.min(trail.length - 1, Math.floor(u * HALF))];
+        var doppler = 1 + 0.65 * Math.cos(p.a);
+        hctx.globalAlpha = veil * Math.min(1, p.age * 2) * Math.min(1, (1.06 - u) * 0.95 * doppler);
+        hctx.strokeStyle = u < 0.22 ? '#f1faff' : u < 0.55 ? '#8fd0f5' : '#3796d0';
+        hctx.lineWidth = 1.05 - u * 0.6;
+        hctx.beginPath();
+        hctx.moveTo(c.x + diskX(p.r * k, p.a - 0.2), c.y + diskY(p.r * k, p.a - 0.2));
+        hctx.lineTo(c.x + diskX(p.r * k, p.a), c.y + diskY(p.r * k, p.a));
+        hctx.stroke();
+      });
+      hctx.globalAlpha = 1;
+    }
+
+    function holeFrame(now) {
+      var dt = Math.min((now - lastT) / 1000, 0.05);
+      lastT = now;
+      spread += (spreadTo - spread) * 0.12;
+      spin += (spinTo - spin) * 0.08;
+      veil += (veilTo - veil) * 0.12;
+      shadow += (shadowTo - shadow) * 0.12;
+      trail.unshift({ x: cx, y: cy });
+      trail.length = Math.min(trail.length, HALF);
+
+      parts.forEach(function (p) {
+        p.a += dt * spin * 3 * Math.pow(IN / p.r, 1.5);
+        p.r -= dt * (1.4 + 16 / p.r) * spin;
+        p.age += dt;
+        if (p.r < IN) spawn(p);
+      });
+
+      hctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+      var core = 6.2 * Math.min(1, Math.sqrt(spread));
+
+      // Glow of the disk, with a tight shadow where it crosses a picture
+      hctx.save();
+      hctx.translate(cx, cy);
+      hctx.rotate(-0.32);
+      hctx.scale(1, TILT * 1.25);
+      var reach = OUT * spread * 1.05;
+      if (shadow > 0.01) {
+        var shade = hctx.createRadialGradient(0, 0, 0, 0, 0, reach);
+        shade.addColorStop(0, 'rgba(3,6,12,' + 0.85 * shadow + ')');
+        shade.addColorStop(0.7, 'rgba(3,6,12,' + 0.6 * shadow + ')');
+        shade.addColorStop(1, 'rgba(3,6,12,0)');
+        hctx.fillStyle = shade;
+        hctx.beginPath();
+        hctx.arc(0, 0, reach, 0, 6.283);
+        hctx.fill();
+      }
+      var glow = hctx.createRadialGradient(0, 0, core, 0, 0, reach);
+      glow.addColorStop(0, 'rgba(190,230,255,' + 0.5 * veil + ')');
+      glow.addColorStop(0.3, 'rgba(90,170,230,' + 0.26 * veil + ')');
+      glow.addColorStop(1, 'rgba(55,150,208,0)');
+      hctx.fillStyle = glow;
+      hctx.beginPath();
+      hctx.arc(0, 0, reach, 0, 6.283);
+      hctx.fill();
+      hctx.restore();
+
+      drawParts(true);
+
+      // The far side of the disk, bent up over the hole by its gravity
+      hctx.strokeStyle = '#8fd0f5';
+      hctx.lineWidth = 1.6;
+      hctx.globalAlpha = 0.3 * veil;
+      hctx.beginPath();
+      hctx.arc(cx, cy, core * 2.05, 0, 6.283);
+      hctx.stroke();
+      hctx.globalAlpha = 1;
+
+      hctx.fillStyle = '#000';
+      hctx.beginPath();
+      hctx.arc(cx, cy, core, 0, 6.283);
+      hctx.fill();
+      // Photon ring
+      hctx.strokeStyle = '#f1faff';
+      hctx.lineWidth = 1;
+      hctx.beginPath();
+      hctx.arc(cx, cy, core + 0.5, 0, 6.283);
+      hctx.stroke();
+
+      drawParts(false);
+
+      // Click ripples, like gravitational waves
+      waves = waves.filter(function (w) {
+        w.r += dt * 150;
+        var left = 1 - w.r / 110;
+        if (left <= 0) return false;
+        hctx.globalAlpha = left * 0.75;
+        hctx.strokeStyle = '#8fd0f5';
+        hctx.lineWidth = 1.2;
+        hctx.beginPath();
+        hctx.ellipse(w.x, w.y, w.r, w.r * 0.62, -0.32, 0, 6.283);
+        hctx.stroke();
+        return true;
+      });
+      hctx.globalAlpha = 1;
+
+      looping = inside || waves.length > 0;
+      if (looping) requestAnimationFrame(holeFrame);
+    }
 
     aim = function (el) {
       if (!el || !el.closest) return;
@@ -583,48 +717,39 @@
       if (hit && hit.matches(':disabled')) hit = null;
       var inBox = el.closest('.lightbox');
       var reading = !hit && !inBox && !!el.closest('p, pre, dd, li, h1, h2, h3');
-      spreadTo = hit || inBox ? 1.9 : reading ? 0.7 : 1;
-      speedTo = hit || inBox ? 4 : 1.2;
-      cursor.classList.toggle('reading', reading);
+      var picture = inBox || (hit && hit.matches('.zoom, .gallery button'));
+      spreadTo = picture ? 1.4 : hit ? 1.5 : reading ? 0.72 : 1;
+      spinTo = hit || inBox ? 2.6 : 1;
+      veilTo = picture ? 1 : hit ? 0.5 : reading ? 0.55 : 1;
+      shadowTo = picture ? 1 : 0;
       labelEl.textContent = inBox ? 'Close' : hit && hit.matches('.zoom, .gallery button') ? 'Enlarge' : '';
     };
-    function cursorFrame(now) {
-      var dt = Math.min((now - lastT) / 1000, 0.05);
-      lastT = now;
-      ox += (cx - ox) * 0.2;
-      oy += (cy - oy) * 0.2;
-      spread += (spreadTo - spread) * 0.14;
-      speed += (speedTo - speed) * 0.1;
-      angle += speed * dt;
-      var rx = 24 * spread, ry = 9 * spread, depth = Math.sin(angle);
-      orbitEl.style.transform = 'translate3d(' + ox.toFixed(1) + 'px,' + oy.toFixed(1) + 'px,0)';
-      ring.setAttribute('rx', rx.toFixed(2));
-      ring.setAttribute('ry', ry.toFixed(2));
-      sat.setAttribute('cx', (Math.cos(angle) * rx).toFixed(2));
-      sat.setAttribute('cy', (depth * ry).toFixed(2));
-      sat.setAttribute('r', (2.4 + depth * 0.8).toFixed(2));   // nearer on the front of the orbit
-      looping = inside;
-      if (looping) requestAnimationFrame(cursorFrame);
-    }
     window.addEventListener('pointermove', function (e) {
       if (e.pointerType === 'touch') return;
       cx = e.clientX;
       cy = e.clientY;
-      dotEl.style.transform = 'translate3d(' + cx + 'px,' + cy + 'px,0)';
-      if (!inside) {
-        if (!doc.classList.contains('has-cursor')) { ox = cx; oy = cy; }
-        inside = true;
+      labelEl.style.transform = 'translate3d(' + cx + 'px,' + cy + 'px,0)';
+      if (!started) {
+        started = true;
         doc.classList.add('has-cursor');
+      }
+      if (!inside) {
+        inside = true;
+        trail = [{ x: cx, y: cy }];
         cursor.classList.add('on');
       }
-      if (!looping) { looping = true; lastT = performance.now(); requestAnimationFrame(cursorFrame); }
+      if (!looping) { looping = true; lastT = performance.now(); requestAnimationFrame(holeFrame); }
       aim(e.target);
     }, { passive: true });
     doc.addEventListener('mouseleave', function () {
       inside = false;
       cursor.classList.remove('on');
     });
-    window.addEventListener('pointerdown', function () { spreadTo *= 0.75; });
+    window.addEventListener('pointerdown', function (e) {
+      if (e.pointerType === 'touch') return;
+      spreadTo *= 0.7;
+      waves.push({ x: cx, y: cy, r: 8 });
+    });
     window.addEventListener('pointerup', function (e) { aim(e.target); });
     // Scrolling moves the page under a still mouse
     window.addEventListener('scroll', function () { aim(document.elementFromPoint(cx, cy)); }, { passive: true });
