@@ -454,7 +454,8 @@
     var runBtn = pipe.querySelector('.pipe-run');
     var runLabel = runBtn.querySelector('span');
     var status = pipe.querySelector('.pipe-status');
-    var follow = true, timer;
+    var follow = true, running = false, timer;
+    var holds = [];   // ms each stage stays on screen
     var total = stages.length;
 
     function setState(s, state) {
@@ -470,7 +471,7 @@
     function done() {
       pipe.style.setProperty('--p', 1);
       status.textContent = 'Run #22 · passed · ' + total + ' of ' + total + ' stages';
-      runBtn.disabled = false;
+      running = false;
       runLabel.textContent = 'Run again';
     }
     function step(i) {
@@ -484,34 +485,49 @@
       timer = setTimeout(function () {
         setState(s, 'passed');
         step(i + 1);
-      }, log.querySelectorAll('code > span').length * 140 + 450);
+      }, holds[i]);
+    }
+    // Show everything now, for visitors who don't want to wait for the run
+    function skip() {
+      clearTimeout(timer);
+      pipe.classList.add('pipe-instant');
+      stages.forEach(function (s) { setState(s, 'passed'); s.querySelector('.log').classList.add('typing'); });
+      if (follow) open(total - 1);
+      done();
     }
     function run() {
       clearTimeout(timer);
       follow = true;
+      pipe.classList.remove('pipe-instant');
       stages.forEach(function (s) {
         setState(s, 'queued');
         s.querySelector('.log').classList.remove('typing');
       });
       if (reduce) {
-        stages.forEach(function (s) { setState(s, 'passed'); s.querySelector('.log').classList.add('typing'); });
+        follow = false;
         open(0);
-        return done();
+        return skip();
       }
-      runBtn.disabled = true;
-      runLabel.textContent = 'Running…';
+      running = true;
+      runLabel.textContent = 'Skip to end';
       void pipe.offsetWidth;   // restart the line animations on a rerun
       step(0);
     }
 
     stages.forEach(function (s, k) {
-      s.querySelectorAll('code > span').forEach(function (line, n) { line.style.setProperty('--i', n); });
+      // Each line appears once the one before has had time to be read
+      var at = 0;
+      s.querySelectorAll('code > span').forEach(function (line) {
+        line.style.setProperty('--at', at + 'ms');
+        at += Math.max(900, line.textContent.length * 38);
+      });
+      holds[k] = at + 1200;
       s.querySelector('.stage-node').addEventListener('click', function () {
         follow = false;
         open(k);
       });
     });
-    runBtn.addEventListener('click', run);
+    runBtn.addEventListener('click', function () { running ? skip() : run(); });
     pipe.classList.add('pipe-js');
     runBtn.hidden = false;
 
@@ -545,17 +561,17 @@
     });
   });
 
-  // ── Gallery lightbox ─────────────────────────────────────────
+  // ── Lightbox (gallery, projects) ────────────────────────────────────────
   var box = document.querySelector('.lightbox');
   if (box && box.showModal) {
     var boxImg = box.querySelector('img');
     var boxCap = box.querySelector('p');
-    document.querySelectorAll('.gallery button').forEach(function (btn) {
+    document.querySelectorAll('.gallery button, .zoom').forEach(function (btn) {
       btn.addEventListener('click', function () {
         var img = btn.querySelector('img');
         boxImg.src = img.src;
         boxImg.alt = img.alt;
-        boxCap.textContent = btn.parentElement.querySelector('figcaption').textContent;
+        boxCap.textContent = btn.getAttribute('aria-label').replace('Enlarge: ', '');
         box.showModal();
       });
     });
