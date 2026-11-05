@@ -447,80 +447,87 @@
     });
   }
 
-  // ── About: each stage runs as it scrolls into view ───────────
+  // ── About: run the pipeline when it comes into view ──────────
   var pipe = document.querySelector('.pipeline');
   if (pipe) {
     var stages = [].slice.call(pipe.querySelectorAll('.stage'));
-    var track = pipe.querySelector('.stages');
-    var pipeDots = pipe.querySelectorAll('.pipe-dots a');
-    var runStatus = pipe.querySelector('.pipe-status');
-    var total = stages.length, queue = [], queuedTo = -1, busy = false, passed = 0, reached = -1;
-    var stageName = function (i) { return stages[i].querySelector('h2').textContent; };
+    var runBtn = pipe.querySelector('.pipe-run');
+    var runLabel = runBtn.querySelector('span');
+    var status = pipe.querySelector('.pipe-status');
+    var follow = true, timer;
+    var total = stages.length;
 
-    function setState(i, state) {
-      stages[i].setAttribute('data-state', state);
-      stages[i].querySelector('.stage-state').textContent = state;
-      pipeDots[i].setAttribute('data-state', state);
+    function setState(s, state) {
+      s.setAttribute('data-state', state);
+      s.querySelector('.stage-node').disabled = state === 'queued';
     }
-    // Fill the track down to the centre of stage i's dot
-    function dotY(i) {
-      var dot = stages[i].querySelector('.stage-dot');
-      return stages[i].offsetTop + dot.offsetTop + dot.offsetHeight / 2;
+    function open(i) {
+      stages.forEach(function (s, k) {
+        s.classList.toggle('open', k === i);
+        s.querySelector('.stage-node').setAttribute('aria-expanded', k === i ? 'true' : 'false');
+      });
     }
-    function fill() {
-      // The track stops at the last stage's dot
-      var end = track.offsetHeight - dotY(total - 1);
-      track.style.setProperty('--end', end + 'px');
-      if (reached < 0) return track.style.setProperty('--p', 0);
-      var line = track.offsetHeight - 30 - end;   // the track starts 30px down
-      var y = dotY(reached) - 30;
-      track.style.setProperty('--p', Math.max(0, Math.min(1, y / line)).toFixed(4));
+    function done() {
+      pipe.style.setProperty('--p', 1);
+      status.textContent = 'Run #22 · passed · ' + total + ' of ' + total + ' stages';
+      runBtn.disabled = false;
+      runLabel.textContent = 'Run again';
     }
-    function next() {
-      if (!queue.length) { busy = false; return; }
-      busy = true;
-      var i = queue.shift();
-      setState(i, 'running');
-      reached = i;
-      fill();
-      runStatus.textContent = stageName(i) + ' · running · ' + (i + 1) + ' of ' + total;
-      // Quicker when the visitor jumped ahead and several stages wait
-      setTimeout(function () {
-        setState(i, 'passed');
-        passed++;
-        runStatus.textContent = passed === total ? 'All ' + total + ' stages passed' : passed + ' of ' + total + ' stages passed';
-        next();
-      }, reduce ? 0 : queue.length ? 300 : 800);
+    function step(i) {
+      if (i === total) return done();
+      var s = stages[i], log = s.querySelector('.log');
+      setState(s, 'running');
+      log.classList.add('typing');
+      if (follow) open(i);
+      pipe.style.setProperty('--p', i / (total - 1));
+      status.textContent = 'Run #22 · ' + s.querySelector('.stage-name').textContent + ' · ' + (i + 1) + ' of ' + total;
+      timer = setTimeout(function () {
+        setState(s, 'passed');
+        step(i + 1);
+      }, log.querySelectorAll('code > span').length * 140 + 450);
     }
-    // Stages always run in order, so reaching one queues every stage before it
-    function runTo(i) {
-      while (queuedTo < i) queue.push(++queuedTo);
-      if (!busy) next();
+    function run() {
+      clearTimeout(timer);
+      follow = true;
+      stages.forEach(function (s) {
+        setState(s, 'queued');
+        s.querySelector('.log').classList.remove('typing');
+      });
+      if (reduce) {
+        stages.forEach(function (s) { setState(s, 'passed'); s.querySelector('.log').classList.add('typing'); });
+        open(0);
+        return done();
+      }
+      runBtn.disabled = true;
+      runLabel.textContent = 'Running…';
+      void pipe.offsetWidth;   // restart the line animations on a rerun
+      step(0);
     }
 
+    stages.forEach(function (s, k) {
+      s.querySelectorAll('code > span').forEach(function (line, n) { line.style.setProperty('--i', n); });
+      s.querySelector('.stage-node').addEventListener('click', function () {
+        follow = false;
+        open(k);
+      });
+    });
+    runBtn.addEventListener('click', run);
     pipe.classList.add('pipe-js');
-    stages.forEach(function (s, i) { setState(i, 'queued'); });
-    runStatus.textContent = 'Queued · scroll to run';
-    fill();
-    window.addEventListener('resize', fill);
+    runBtn.hidden = false;
 
-    if (reduce || !('IntersectionObserver' in window)) {
-      runTo(total - 1);
+    // Queued until seen, then it runs once by itself
+    stages.forEach(function (s) { setState(s, 'queued'); });
+    open(-1);
+    status.textContent = 'Run #22 · queued';
+    if ('IntersectionObserver' in window) {
+      var pio = new IntersectionObserver(function (entries) {
+        if (!entries[0].isIntersecting) return;
+        pio.disconnect();
+        setTimeout(run, 400);
+      }, { threshold: 0.35 });
+      pio.observe(pipe);
     } else {
-      var sio = new IntersectionObserver(function (entries) {
-        entries.forEach(function (e) {
-          if (!e.isIntersecting) return;
-          runTo(stages.indexOf(e.target));
-          sio.unobserve(e.target);
-        });
-      }, { rootMargin: '0px 0px -30% 0px' });
-      stages.forEach(function (s) { sio.observe(s); });
-      // The last stage may never reach the trigger line on a tall screen
-      window.addEventListener('scroll', function atEnd() {
-        if (window.innerHeight + window.scrollY < doc.scrollHeight - 40) return;
-        window.removeEventListener('scroll', atEnd);
-        runTo(total - 1);
-      }, { passive: true });
+      run();
     }
   }
 

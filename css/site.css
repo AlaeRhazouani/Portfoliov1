@@ -811,62 +811,36 @@ a:hover .arrow { translate: 2px -2px; }
 }
 
 /* ── About: the story as a pipeline run ───────────────────────────
-   Readable stage cards on a vertical track. site.js runs each stage
-   as it scrolls into view; without script every stage shows passed. */
-.pipeline { display: flex; flex-direction: column; gap: 28px; }
-.pipe-bar {
-  position: sticky;
-  top: 92px;
-  z-index: 5;
-  border-radius: 18px;
-  padding: 10px 18px;
-  display: flex;
-  align-items: center;
-  gap: 8px 18px;
-  flex-wrap: wrap;
-}
-.pipe-file { font: 500 15px / 1.3 var(--mono); }
-.pipe-dots { display: flex; }
-.pipe-dots a { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; }
-.pipe-dots span { width: 10px; height: 10px; border-radius: 50%; box-shadow: inset 0 0 0 1.5px var(--line-strong); transition: background-color .3s ease, box-shadow .3s ease, scale .3s var(--ease); }
-.pipe-dots a:hover span { scale: 1.3; }
-.pipe-dots [data-state="running"] span { box-shadow: inset 0 0 0 1.5px var(--accent-hi); animation: blink .8s ease-in-out infinite alternate; }
-.pipe-dots [data-state="passed"] span { background: var(--accent); box-shadow: inset 0 0 0 1.5px var(--accent-hi); }
-@keyframes blink { to { background: rgba(143, 208, 245, .5); } }
-.pipe-status { margin-left: auto; font-size: var(--fs-sm); color: var(--ink-dim); }
-
-.stages {
-  position: relative;
-  list-style: none;
-  margin: 0;
-  padding: 0 0 0 46px;
+   Without script: every stage passed, every log open in a list.
+   With script (.pipe-js): six nodes on a track, one shared log cell. */
+.pipeline {
+  border-radius: 22px;
+  padding: clamp(20px, 3vw, 32px);
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 26px;
 }
-/* The track, and its fill down to the stage that last ran */
-.stages::before,
-.stages::after {
-  content: "";
-  position: absolute;
-  left: 13px;
-  top: 30px;
-  bottom: var(--end, 30px);
-  width: 2px;
-  background: var(--line-strong);
+.pipe-head { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px 20px; }
+.pipe-title { font: 500 18px / 1.3 var(--mono); color: var(--ink); }
+.pipe-status { margin-top: 4px; }
+.pipe-run:disabled { cursor: progress; opacity: .7; }
+
+.stages { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 22px; }
+.stage-node {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: default;
 }
-.stages::after {
-  background: var(--accent);
-  transform-origin: 50% 0;
-  transform: scaleY(var(--p, 1));
-  transition: transform .6s var(--ease);
-}
-.stage { position: relative; scroll-margin-top: 170px; }
 .stage-dot {
-  position: absolute;
-  z-index: 1;
-  left: -46px;
-  top: 26px;
+  position: relative;
+  flex-shrink: 0;
   width: 28px;
   height: 28px;
   border-radius: 50%;
@@ -890,27 +864,81 @@ a:hover .arrow { translate: 2px -2px; }
   animation: spin .8s linear infinite;
 }
 @keyframes spin { to { rotate: 1turn; } }
+.stage-name { font-size: 15px; font-weight: 600; line-height: 1.2; transition: color .2s ease; }
+.stage-sub { font-size: 13px; color: var(--ink-faint); }
 
-.stage-card { border-radius: 20px; padding: clamp(22px, 3vw, 30px); display: flex; flex-direction: column; gap: 12px; }
-.stage-head { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 4px 16px; }
-.stage-head h2 { font-size: var(--fs-h2); font-weight: 600; line-height: 1.3; }
-.stage-job { font: 13px / 1.4 var(--mono); color: var(--ink-faint); }
-.stage-job span:first-child { color: var(--accent-hi); }
-.stage[data-state="running"] .stage-state { color: var(--accent-hi); }
-.stage-card p:not([class]) { color: var(--ink); }
-.stage-tags { font-size: var(--fs-sm); color: var(--accent-hi); }
-.stage-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 22px; margin-top: 8px; }
+.log {
+  margin-top: 12px;
+  border-radius: 14px;
+  padding: 16px 18px;
+  background: rgba(3, 6, 12, .55);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.log pre { margin: 0; font: 13.5px / 1.75 var(--mono); }
+/* Grid drops the newlines between lines, so each line can move on its own */
+.log code { display: grid; }
+.log code > span { white-space: pre-wrap; color: var(--ink); padding-left: 1.6em; text-indent: -1.6em; }
+.log code > .cmd { color: var(--ink-faint); }
+.log b { font-weight: 500; color: var(--accent-hi); }
+.log-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 22px; margin-top: 18px; }
 
-/* Queued stages wait a little dimmer and lower, then rise as they run */
-.pipe-js .stage-card { transition: opacity .6s ease, translate .7s var(--ease); }
-.pipe-js .stage[data-state="queued"] .stage-card { opacity: .35; translate: 0 16px; }
+/* Scripted layout */
+.pipe-js .stages {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 0;
+}
+/* Track behind the dots, and its fill up to the running stage */
+.pipe-js .stages::before,
+.pipe-js .stages::after {
+  content: "";
+  position: absolute;
+  top: 24px;
+  left: calc(100% / 12);
+  right: calc(100% / 12);
+  height: 2px;
+  margin-top: -1px;
+  background: var(--line-strong);
+}
+.pipe-js .stages::after {
+  background: var(--accent);
+  transform-origin: 0 50%;
+  transform: scaleX(var(--p, 0));
+  transition: transform .5s var(--ease);
+}
+.pipe-js .stage { display: contents; }
+.pipe-js .stage-node {
+  position: relative;
+  z-index: 1;
+  grid-row: 1;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 4px 12px;
+  border-radius: 14px;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color .2s ease;
+}
+.pipe-js .stage-dot { margin-bottom: 6px; }
+.pipe-js .stage-node:not(:disabled):hover { background: rgba(143, 208, 245, .06); }
+.pipe-js .stage-node:disabled { cursor: default; }
+.pipe-js .stage-node:disabled .stage-name { color: var(--ink-faint); }
+.pipe-js .stage.open .stage-name { color: var(--accent-hi); }
+.pipe-js .stage.open .stage-node { background: rgba(55, 150, 208, .12); }
+/* All logs share one cell, so the panel keeps the height of the longest */
+.pipe-js .log { grid-row: 2; grid-column: 1 / -1; margin-top: 18px; visibility: hidden; }
+.pipe-js .stage.open .log { visibility: visible; }
+.pipe-js .log code > span { opacity: 0; }
+.pipe-js .log.typing code > span { opacity: 1; animation: line-in .32s var(--ease) backwards; animation-delay: calc(var(--i, 0) * 140ms); }
+@keyframes line-in { from { opacity: 0; translate: 0 6px; } }
 
-@media (max-width: 760px) {
-  .pipe-bar { position: static; }
-  .stages { padding-left: 36px; gap: 24px; }
-  .stages::before, .stages::after { left: 10px; }
-  .stage-dot { left: -36px; width: 22px; height: 22px; top: 24px; }
-  .stage-dot svg { width: 13px; height: 13px; }
+@media (max-width: 620px) {
+  .pipe-js .stages { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 4px; }
+  .pipe-js .stages::before, .pipe-js .stages::after { display: none; }
+  .pipe-js .stage:nth-child(n + 4) .stage-node { grid-row: 2; }
+  .pipe-js .log { grid-row: 3; margin-top: 14px; padding: 14px; }
+  .log pre { font-size: 12.5px; }
 }
 
 /* ── Motion: progress, reveal, page transitions ───────────────── */
