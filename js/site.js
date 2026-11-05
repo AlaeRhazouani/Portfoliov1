@@ -561,7 +561,76 @@
     });
   });
 
-  // ── Lightbox (gallery, projects) ────────────────────────────────────────
+  // ── Cursor: a dot with a small orbit, echoing the one around the name ──
+  // The native arrow stays until the first mouse move, so nothing is
+  // ever missing after a page change. Touch never gets here.
+  var cursor = null, aim = function () {};
+  if (finePointer && !reduce) {
+    cursor = document.createElement('div');
+    cursor.className = 'cursor';
+    cursor.setAttribute('aria-hidden', 'true');
+    cursor.innerHTML = '<svg class="cursor-orbit" viewBox="-60 -60 120 120"><g transform="rotate(-18)"><ellipse /><circle /></g></svg>' +
+      '<i class="cursor-dot"><span class="cursor-label"></span></i>';
+    document.body.appendChild(cursor);
+    var orbitEl = cursor.querySelector('svg'), ring = cursor.querySelector('ellipse'), sat = cursor.querySelector('circle');
+    var dotEl = cursor.querySelector('i'), labelEl = cursor.querySelector('span');
+    var cx = 0, cy = 0, ox = 0, oy = 0, spread = 1, spreadTo = 1, speed = 1.2, speedTo = 1.2;
+    var angle = 0, lastT = 0, inside = false, looping = false;
+
+    aim = function (el) {
+      if (!el || !el.closest) return;
+      var hit = el.closest('a, button');
+      if (hit && hit.matches(':disabled')) hit = null;
+      var inBox = el.closest('.lightbox');
+      var reading = !hit && !inBox && !!el.closest('p, pre, dd, li, h1, h2, h3');
+      spreadTo = hit || inBox ? 1.9 : reading ? 0.7 : 1;
+      speedTo = hit || inBox ? 4 : 1.2;
+      cursor.classList.toggle('reading', reading);
+      labelEl.textContent = inBox ? 'Close' : hit && hit.matches('.zoom, .gallery button') ? 'Enlarge' : '';
+    };
+    function cursorFrame(now) {
+      var dt = Math.min((now - lastT) / 1000, 0.05);
+      lastT = now;
+      ox += (cx - ox) * 0.2;
+      oy += (cy - oy) * 0.2;
+      spread += (spreadTo - spread) * 0.14;
+      speed += (speedTo - speed) * 0.1;
+      angle += speed * dt;
+      var rx = 24 * spread, ry = 9 * spread, depth = Math.sin(angle);
+      orbitEl.style.transform = 'translate3d(' + ox.toFixed(1) + 'px,' + oy.toFixed(1) + 'px,0)';
+      ring.setAttribute('rx', rx.toFixed(2));
+      ring.setAttribute('ry', ry.toFixed(2));
+      sat.setAttribute('cx', (Math.cos(angle) * rx).toFixed(2));
+      sat.setAttribute('cy', (depth * ry).toFixed(2));
+      sat.setAttribute('r', (2.4 + depth * 0.8).toFixed(2));   // nearer on the front of the orbit
+      looping = inside;
+      if (looping) requestAnimationFrame(cursorFrame);
+    }
+    window.addEventListener('pointermove', function (e) {
+      if (e.pointerType === 'touch') return;
+      cx = e.clientX;
+      cy = e.clientY;
+      dotEl.style.transform = 'translate3d(' + cx + 'px,' + cy + 'px,0)';
+      if (!inside) {
+        if (!doc.classList.contains('has-cursor')) { ox = cx; oy = cy; }
+        inside = true;
+        doc.classList.add('has-cursor');
+        cursor.classList.add('on');
+      }
+      if (!looping) { looping = true; lastT = performance.now(); requestAnimationFrame(cursorFrame); }
+      aim(e.target);
+    }, { passive: true });
+    doc.addEventListener('mouseleave', function () {
+      inside = false;
+      cursor.classList.remove('on');
+    });
+    window.addEventListener('pointerdown', function () { spreadTo *= 0.75; });
+    window.addEventListener('pointerup', function (e) { aim(e.target); });
+    // Scrolling moves the page under a still mouse
+    window.addEventListener('scroll', function () { aim(document.elementFromPoint(cx, cy)); }, { passive: true });
+  }
+
+  // ── Lightbox (gallery, projects)────────────────────────────────────────
   var box = document.querySelector('.lightbox');
   if (box && box.showModal) {
     var boxImg = box.querySelector('img');
@@ -573,9 +642,14 @@
         boxImg.alt = img.alt;
         boxCap.textContent = btn.getAttribute('aria-label').replace('Enlarge: ', '');
         box.showModal();
+        // A modal sits in the top layer, so the cursor has to go inside it
+        if (cursor) { box.appendChild(cursor); aim(box); }
       });
     });
     box.addEventListener('click', function () { box.close(); });
+    box.addEventListener('close', function () {
+      if (cursor) { document.body.appendChild(cursor); aim(document.elementFromPoint(cx, cy)); }
+    });
   }
 
   // ── Fade between internal pages ──────────────────────────────

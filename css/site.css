@@ -942,6 +942,19 @@ a:hover .arrow { translate: 2px -2px; }
   .log pre { font-size: 12.5px; }
 }
 
+/* ── Cursor: dot, orbit and satellite (site.js, mouse only) ───────
+   Dark outlines keep it visible on the white screenshots too. */
+.has-cursor, .has-cursor * { cursor: none !important; }
+.cursor { position: fixed; left: 0; top: 0; z-index: 2147483647; pointer-events: none; opacity: 0; transition: opacity .2s ease; }
+.cursor.on { opacity: 1; }
+.cursor-orbit { position: absolute; left: -60px; top: -60px; width: 120px; height: 120px; overflow: visible; transition: opacity .25s ease; }
+.cursor-orbit ellipse { fill: none; stroke: rgba(55, 150, 208, .85); stroke-width: 1; }
+.cursor-orbit circle { fill: var(--accent-hi); stroke: rgba(3, 6, 12, .75); stroke-width: 1; }
+.cursor.reading .cursor-orbit { opacity: .45; }
+.cursor-dot { position: absolute; left: -3px; top: -3px; width: 6px; height: 6px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 1.5px rgba(3, 6, 12, .7), 0 0 8px var(--accent); }
+.cursor-label { position: absolute; left: 34px; top: 22px; padding: 3px 10px; border-radius: 999px; font: 500 13px / 1.4 var(--sans); color: var(--ink); background: rgba(3, 6, 12, .8); white-space: nowrap; }
+.cursor-label:empty { display: none; }
+
 /* ── Motion: progress, reveal, page transitions ───────────────── */
 .progress {
   position: fixed;
